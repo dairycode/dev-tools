@@ -3,5 +3,5 @@
 node_modules
 dist
 
-ai-dev-kits.tar
-send_docker_script.sh
+dev-tools.tar
+send-dev-tools.sh
