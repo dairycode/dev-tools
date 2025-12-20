@@ -1,0 +1,11 @@
+node_modules
+dist
+.git
+.gitignore
+Dockerfile
+docker-compose.yml
+.DS_Store
+README.md
+**/.env
+**/.env.*
+ai-dev-kits.tar

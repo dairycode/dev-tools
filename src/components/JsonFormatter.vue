@@ -26,8 +26,21 @@
           <span>清空</span>
         </button>
       </div>
+
+      <!-- JSON树视图 -->
+      <div v-if="parsedJson !== null" class="tree-view-container">
+        <div class="tree-view">
+          <JsonTreeNode
+            :data="parsedJson"
+            :keyName="'root'"
+            :level="0"
+            :expandedPaths="expandedPaths"
+            @toggle="togglePath"
+          />
+        </div>
+      </div>
     </div>
-    
+
     <div v-if="message" :class="['message', messageType]">
       {{ message }}
     </div>
@@ -35,13 +48,20 @@
 </template>
 
 <script>
+import JsonTreeNode from './JsonTreeNode.vue'
+
 export default {
   name: 'JsonFormatter',
+  components: {
+    JsonTreeNode
+  },
   data() {
     return {
       inputText: '',
       message: '',
-      messageType: 'success'
+      messageType: 'success',
+      parsedJson: null,
+      expandedPaths: new Set()
     }
   },
   watch: {
@@ -58,43 +78,53 @@ export default {
         this.showMessage('请输入要格式化的JSON数据', 'error')
         return
       }
-      
+
       try {
         // 先解析JSON确保格式正确
         const parsed = JSON.parse(this.inputText)
         // 格式化输出，使用2个空格缩进，直接覆盖输入框
         this.inputText = JSON.stringify(parsed, null, 2)
+        this.parsedJson = parsed
+        this.expandedPaths.clear()
+        this.expandAll()
         this.showMessage('JSON格式化成功！', 'success')
       } catch (error) {
+        this.parsedJson = null
         this.showMessage('JSON格式错误：' + error.message, 'error')
       }
     },
-    
+
     compressJson() {
       if (!this.inputText.trim()) {
         this.showMessage('请输入要压缩的JSON数据', 'error')
         return
       }
-      
+
       try {
         // 先解析JSON确保格式正确
         const parsed = JSON.parse(this.inputText)
         // 压缩输出，无缩进，直接覆盖输入框
         this.inputText = JSON.stringify(parsed)
+        this.parsedJson = parsed
+        this.expandedPaths.clear()
+        this.expandAll()
         this.showMessage('JSON压缩成功！', 'success')
       } catch (error) {
+        this.parsedJson = null
         this.showMessage('JSON格式错误：' + error.message, 'error')
       }
     },
-    
+
     clearAll() {
       this.inputText = ''
       this.message = ''
+      this.parsedJson = null
+      this.expandedPaths.clear()
       this.$nextTick(() => {
         this.autoResize()
       })
     },
-    
+
     showMessage(text, type) {
       this.message = text
       this.messageType = type
@@ -102,13 +132,41 @@ export default {
         this.message = ''
       }, 3000)
     },
-    
+
     autoResize() {
       const area = this.$refs.inputArea
       if (area && area instanceof HTMLTextAreaElement) {
         area.style.height = 'auto'
         area.style.height = area.scrollHeight + 'px'
       }
+    },
+
+    togglePath(path) {
+      if (this.expandedPaths.has(path)) {
+        this.expandedPaths.delete(path)
+      } else {
+        this.expandedPaths.add(path)
+      }
+      this.expandedPaths = new Set(this.expandedPaths)
+    },
+
+    expandAll() {
+      const collectPaths = (obj, currentPath = '') => {
+        if (obj && typeof obj === 'object') {
+          this.expandedPaths.add(currentPath)
+          Object.keys(obj).forEach(key => {
+            const newPath = currentPath ? `${currentPath}.${key}` : key
+            collectPaths(obj[key], newPath)
+          })
+        }
+      }
+      collectPaths(this.parsedJson, 'root')
+      this.expandedPaths = new Set(this.expandedPaths)
+    },
+
+    collapseAll() {
+      this.expandedPaths.clear()
+      this.expandedPaths = new Set(this.expandedPaths)
     }
   }
 }
@@ -152,20 +210,42 @@ export default {
   max-width: 300px;
 }
 
+.tree-view-container {
+  width: 100%;
+  margin-top: 24px;
+}
+
+.tree-view {
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  padding: 16px;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 13px;
+  line-height: 1.6;
+  overflow-x: auto;
+  max-height: 600px;
+  overflow-y: auto;
+}
+
 @media (max-width: 768px) {
   .json-formatter {
     gap: 24px;
     padding-top: 5vh;
   }
-  
+
   .json-textarea {
     min-height: 100px !important;
   }
-  
+
   .message {
     right: 10px;
     left: 10px;
     max-width: none;
+  }
+
+  .tree-view {
+    max-height: 400px;
   }
 }
 </style> 
