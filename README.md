@@ -44,6 +44,12 @@
 - **文本视图**：传统的文本格式显示
 - **错误提示**：清晰的JSON语法错误提示
 
+### 🌓 暗黑模式
+- **主题切换**：支持亮色/暗黑主题一键切换
+- **自动保存**：记住用户的主题偏好设置
+- **系统同步**：自动适配系统主题偏好
+- **护眼舒适**：暗黑模式下减少眼睛疲劳
+
 ## 🚀 快速开始
 
 ### 安装依赖
@@ -68,15 +74,19 @@ npm run preview
 
 ## 🎨 界面特性
 
-- **现代化设计**：采用渐变背景和卡片式布局
+- **侧边栏导航**：清晰的侧边栏设计，功能分类一目了然
+- **暗黑模式**：支持亮色/暗黑主题切换，护眼更舒适
+- **现代化设计**：简洁优雅的界面风格和卡片式布局
 - **响应式布局**：完美适配桌面端和移动端
-- **交互动画**：悬停效果和按钮动画
+- **交互动画**：流畅的悬停效果和按钮动画
 - **用户友好**：清晰的操作提示和错误信息
+- **GitHub链接**：一键访问项目源代码
 
 ## ⌨️ 快捷键
 
 - **Ctrl+Enter** (Windows) 或 **Cmd+Enter** (Mac)：快速执行当前工具的主要功能
 - **点击输出区域**：自动复制结果到剪贴板
+- **主题切换按钮**：位于侧边栏底部，随时切换亮色/暗黑模式
 
 ## 🛠️ 技术栈
 
@@ -84,7 +94,9 @@ npm run preview
 - **Vite**：快速的构建工具和开发服务器
 - **QRCode.js**：二维码生成库
 - **CryptoJS**：加密算法库
-- **CSS3**：Flexbox、Grid布局、渐变、动画
+- **CSS3**：Flexbox、Grid布局、CSS变量、动画
+- **Composables**：可复用的组合式函数模式
+- **LocalStorage**：主题偏好持久化存储
 
 ## 📁 项目结构
 
@@ -96,7 +108,10 @@ src/
 │   ├── HashEncoder.vue          # Hash编码组件
 │   ├── TimestampConverter.vue   # 时间戳转换组件
 │   ├── QrCodeGenerator.vue      # 二维码生成组件
-│   └── JsonFormatter.vue        # JSON格式化组件（含树视图）
+│   ├── JsonFormatter.vue        # JSON格式化组件
+│   └── JsonTreeNode.vue         # JSON树视图节点组件
+├── composables/
+│   └── useTheme.js              # 主题切换逻辑
 ├── App.vue                      # 主应用组件
 ├── main.js                      # 应用入口
 └── style.css                    # 全局样式
@@ -119,12 +134,18 @@ await QRCode.toCanvas(this.$refs.qrCanvas, this.inputText, {
 ```
 
 ### 修改主题颜色
-在 `src/style.css` 中修改CSS变量来改变主题颜色：
+在 [src/style.css](src/style.css) 中修改CSS变量来改变主题颜色：
 
 ```css
 :root {
   --primary-color: #667eea;
   --secondary-color: #764ba2;
+}
+
+.dark {
+  --bg-primary: #1a1a1a;
+  --bg-secondary: #242424;
+  /* 更多暗黑模式变量... */
 }
 ```
 
