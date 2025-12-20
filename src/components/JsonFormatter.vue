@@ -61,18 +61,52 @@ export default {
       message: '',
       messageType: 'success',
       parsedJson: null,
-      expandedPaths: new Set()
+      expandedPaths: new Set(),
+      parseTimeout: null
     }
   },
   watch: {
     inputText() {
       this.$nextTick(() => this.autoResize())
+      this.autoParseJson()
     }
   },
   mounted() {
     this.autoResize()
   },
+  beforeUnmount() {
+    // 清理定时器
+    if (this.parseTimeout) {
+      clearTimeout(this.parseTimeout)
+    }
+  },
   methods: {
+    autoParseJson() {
+      // 清除之前的定时器
+      if (this.parseTimeout) {
+        clearTimeout(this.parseTimeout)
+      }
+
+      // 如果输入为空，清空树视图
+      if (!this.inputText.trim()) {
+        this.parsedJson = null
+        return
+      }
+
+      // 使用防抖，500ms后自动解析
+      this.parseTimeout = setTimeout(() => {
+        try {
+          const parsed = JSON.parse(this.inputText)
+          this.parsedJson = parsed
+          this.expandedPaths.clear()
+          this.expandAll()
+        } catch (error) {
+          // 静默处理错误，只在格式化/压缩时显示错误消息
+          this.parsedJson = null
+        }
+      }, 500)
+    },
+
     formatJson() {
       if (!this.inputText.trim()) {
         this.showMessage('请输入要格式化的JSON数据', 'error')
