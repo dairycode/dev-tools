@@ -33,7 +33,7 @@
         <div class="qr-container">
           <div v-if="isLoading" class="loading"></div>
           <canvas ref="qrCanvas" v-show="qrCodeGenerated" style="display: block; margin: 0 auto;"></canvas>
-          <p v-if="!qrCodeGenerated && !isLoading" style="color: #6c757d; margin: 0;">二维码将在这里显示</p>
+          <p v-if="!qrCodeGenerated && !isLoading" class="qr-placeholder">二维码将在这里显示</p>
         </div>
       </div>
     </div>
@@ -183,9 +183,9 @@ export default {
 .qr-container {
   display: inline-block;
   padding: 24px;
-  background: #f8f9fa;
+  background: var(--bg-secondary);
   border-radius: 12px;
-  border: 2px dashed #dee2e6;
+  border: 2px dashed var(--border-color);
   min-height: 200px;
   display: flex;
   align-items: center;
@@ -195,6 +195,11 @@ export default {
 .qr-container canvas {
   max-width: 200px;
   height: auto;
+}
+
+.qr-placeholder {
+  color: var(--text-tertiary);
+  margin: 0;
 }
 
 .message {

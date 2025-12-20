@@ -189,14 +189,14 @@ export default {
   background-size: 14px;
   cursor: pointer;
   transition: all 0.3s ease;
-  border: 1.5px solid #e9ecef;
+  border: 1.5px solid var(--border-color);
   border-radius: 8px;
   padding: 10px 36px 10px 12px;
   font-size: 14px;
   font-weight: 500;
-  color: #495057;
-  background-color: #ffffff;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  color: var(--text-primary);
+  background-color: var(--input-bg);
+  box-shadow: 0 1px 3px var(--shadow-color);
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
@@ -204,15 +204,15 @@ export default {
 }
 
 .hash-select:hover {
-  border-color: #007bff;
-  box-shadow: 0 2px 8px rgba(0, 123, 255, 0.12);
+  border-color: var(--primary-color);
+  box-shadow: 0 2px 8px var(--primary-light);
   transform: translateY(-0.5px);
 }
 
 .hash-select:focus {
   outline: none;
-  border-color: #007bff;
-  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.2), 0 2px 8px rgba(0, 123, 255, 0.12);
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px var(--primary-light), 0 2px 8px var(--primary-light);
   transform: translateY(-0.5px);
 }
 
@@ -231,7 +231,7 @@ export default {
 
 .form-group label {
   font-weight: 600;
-  color: #495057;
+  color: var(--text-secondary);
   font-size: 14px;
 }
 
@@ -243,17 +243,17 @@ export default {
   resize: none;
   overflow-y: hidden;
   transition: height 0.2s;
-  border: 1.5px solid #e9ecef;
+  border: 1.5px solid var(--border-color);
   border-radius: 8px;
   padding: 12px;
-  background-color: #ffffff;
-  color: #495057;
+  background-color: var(--input-bg);
+  color: var(--text-primary);
 }
 
 .large-textarea:focus {
   outline: none;
-  border-color: #007bff;
-  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.2);
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px var(--primary-light);
 }
 
 .button-group {
@@ -274,47 +274,47 @@ export default {
 }
 
 .btn-primary {
-  background-color: #007bff;
+  background-color: var(--primary-color);
   color: white;
 }
 
 .btn-primary:hover {
-  background-color: #0056b3;
+  background-color: var(--primary-hover);
   transform: translateY(-1px);
 }
 
 .btn-secondary {
-  background-color: #6c757d;
+  background-color: var(--text-tertiary);
   color: white;
 }
 
 .btn-secondary:hover {
-  background-color: #545b62;
+  background-color: var(--text-secondary);
   transform: translateY(-1px);
 }
 
 .btn-copy {
-  background-color: #28a745;
+  background-color: var(--success-color);
   color: white;
 }
 
 .btn-copy:hover {
-  background-color: #1e7e34;
+  background-color: var(--success-hover);
   transform: translateY(-1px);
 }
 
 .result-display {
-  background: #f8f9fa;
+  background: var(--bg-secondary);
   padding: 16px;
   border-radius: 8px;
-  border: 1px solid #dee2e6;
+  border: 1px solid var(--border-color);
 }
 
 .hash-result {
   font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
   font-size: 14px;
   word-break: break-all;
-  color: #495057;
+  color: var(--text-primary);
   background: transparent;
   padding: 0;
   border: none;
@@ -336,15 +336,15 @@ export default {
 }
 
 .message.success {
-  background-color: #d4edda;
-  color: #155724;
-  border: 1px solid #c3e6cb;
+  background-color: var(--success-bg);
+  color: var(--success-text);
+  border: 1px solid var(--success-border);
 }
 
 .message.error {
-  background-color: #f8d7da;
-  color: #721c24;
-  border: 1px solid #f5c6cb;
+  background-color: var(--error-bg);
+  color: var(--error-text);
+  border: 1px solid var(--error-border);
 }
 
 @keyframes slideIn {

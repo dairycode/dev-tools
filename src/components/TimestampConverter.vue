@@ -296,19 +296,19 @@ export default {
 .converter-section {
   width: 100%;
   max-width: 800px;
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
   padding: 24px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px var(--shadow-color);
 }
 
 .section-title {
   font-size: 18px;
   font-weight: 600;
-  color: #1a1a1a;
+  color: var(--text-primary);
   margin: 0 0 20px 0;
   padding-bottom: 12px;
-  border-bottom: 2px solid #e3f2fd;
+  border-bottom: 2px solid var(--primary-color);
 }
 
 .input-section {
@@ -340,10 +340,10 @@ export default {
 }
 
 .result-display {
-  background: #f8f9fa;
+  background: var(--bg-secondary);
   border-radius: 8px;
   padding: 16px;
-  border: 1px solid #e9ecef;
+  border: 1px solid var(--border-light);
 }
 
 .result-item {
@@ -351,7 +351,7 @@ export default {
   justify-content: space-between;
   align-items: center;
   padding: 8px 0;
-  border-bottom: 1px solid #e9ecef;
+  border-bottom: 1px solid var(--border-light);
 }
 
 .result-item:last-child {
@@ -360,15 +360,15 @@ export default {
 
 .result-label {
   font-weight: 500;
-  color: #495057;
+  color: var(--text-secondary);
   font-size: 14px;
 }
 
 .result-value {
   font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
   font-size: 13px;
-  color: #1976d2;
-  background: #e3f2fd;
+  color: var(--primary-color);
+  background: var(--bg-active);
   padding: 4px 8px;
   border-radius: 4px;
   word-break: break-all;

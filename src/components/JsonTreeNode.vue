@@ -139,7 +139,7 @@ export default {
   width: 14px;
   height: 14px;
   cursor: pointer;
-  color: #6c757d;
+  color: var(--text-tertiary);
   font-size: 10px;
   text-align: center;
   line-height: 14px;
@@ -147,7 +147,7 @@ export default {
 }
 
 .toggle-icon:hover {
-  color: #1976d2;
+  color: var(--primary-color);
 }
 
 .toggle-icon-placeholder {
@@ -157,12 +157,12 @@ export default {
 }
 
 .key-name {
-  color: #1976d2;
+  color: var(--primary-color);
   font-weight: 500;
 }
 
 .colon {
-  color: #6c757d;
+  color: var(--text-tertiary);
 }
 
 .value {
@@ -170,30 +170,31 @@ export default {
 }
 
 .value.string {
-  color: #005cc5;
+  color: var(--primary-color);
 }
 
 .value.number {
-  color: #005cc5;
+  color: var(--primary-color);
 }
 
 .value.boolean {
-  color: #005cc5;
+  color: var(--primary-color);
 }
 
 .value.null {
-  color: #005cc5;
+  color: var(--primary-color);
 }
 
 .bracket {
-  color: #6c757d;
+  color: var(--text-tertiary);
 }
 
 .preview {
-  color: #adb5bd;
+  color: var(--text-tertiary);
   font-style: italic;
   margin: 0 6px;
   font-size: 12px;
+  opacity: 0.7;
 }
 
 .children {
@@ -205,24 +206,5 @@ export default {
   align-items: center;
   gap: 6px;
   padding: 2px 0;
-}
-
-/* 暗色主题适配 */
-@media (prefers-color-scheme: dark) {
-  .value.string {
-    color: #79c0ff;
-  }
-
-  .value.number {
-    color: #79c0ff;
-  }
-
-  .value.boolean {
-    color: #79c0ff;
-  }
-
-  .value.null {
-    color: #79c0ff;
-  }
 }
 </style>
