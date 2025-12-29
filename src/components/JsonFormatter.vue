@@ -47,163 +47,155 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { ref, watch, onMounted, onBeforeUnmount, nextTick } from 'vue'
 import JsonTreeNode from './JsonTreeNode.vue'
 
-export default {
-  name: 'JsonFormatter',
-  components: {
-    JsonTreeNode
-  },
-  data() {
-    return {
-      inputText: '',
-      message: '',
-      messageType: 'success',
-      parsedJson: null,
-      expandedPaths: new Set(),
-      parseTimeout: null
+const inputText = ref('')
+const message = ref('')
+const messageType = ref('success')
+const parsedJson = ref(null)
+const expandedPaths = ref(new Set())
+const parseTimeout = ref(null)
+const inputArea = ref(null)
+
+const autoParseJson = () => {
+  // 清除之前的定时器
+  if (parseTimeout.value) {
+    clearTimeout(parseTimeout.value)
+  }
+
+  // 如果输入为空，清空树视图
+  if (!inputText.value.trim()) {
+    parsedJson.value = null
+    return
+  }
+
+  // 使用防抖，500ms后自动解析
+  parseTimeout.value = setTimeout(() => {
+    try {
+      const parsed = JSON.parse(inputText.value)
+      parsedJson.value = parsed
+      expandedPaths.value.clear()
+      expandAll()
+    } catch (error) {
+      // 静默处理错误，只在格式化/压缩时显示错误消息
+      parsedJson.value = null
     }
-  },
-  watch: {
-    inputText() {
-      this.$nextTick(() => this.autoResize())
-      this.autoParseJson()
-    }
-  },
-  mounted() {
-    this.autoResize()
-  },
-  beforeUnmount() {
-    // 清理定时器
-    if (this.parseTimeout) {
-      clearTimeout(this.parseTimeout)
-    }
-  },
-  methods: {
-    autoParseJson() {
-      // 清除之前的定时器
-      if (this.parseTimeout) {
-        clearTimeout(this.parseTimeout)
-      }
+  }, 500)
+}
 
-      // 如果输入为空，清空树视图
-      if (!this.inputText.trim()) {
-        this.parsedJson = null
-        return
-      }
+const formatJson = () => {
+  if (!inputText.value.trim()) {
+    showMessage('请输入要格式化的JSON数据', 'error')
+    return
+  }
 
-      // 使用防抖，500ms后自动解析
-      this.parseTimeout = setTimeout(() => {
-        try {
-          const parsed = JSON.parse(this.inputText)
-          this.parsedJson = parsed
-          this.expandedPaths.clear()
-          this.expandAll()
-        } catch (error) {
-          // 静默处理错误，只在格式化/压缩时显示错误消息
-          this.parsedJson = null
-        }
-      }, 500)
-    },
-
-    formatJson() {
-      if (!this.inputText.trim()) {
-        this.showMessage('请输入要格式化的JSON数据', 'error')
-        return
-      }
-
-      try {
-        // 先解析JSON确保格式正确
-        const parsed = JSON.parse(this.inputText)
-        // 格式化输出，使用2个空格缩进，直接覆盖输入框
-        this.inputText = JSON.stringify(parsed, null, 2)
-        this.parsedJson = parsed
-        this.expandedPaths.clear()
-        this.expandAll()
-        this.showMessage('JSON格式化成功！', 'success')
-      } catch (error) {
-        this.parsedJson = null
-        this.showMessage('JSON格式错误：' + error.message, 'error')
-      }
-    },
-
-    compressJson() {
-      if (!this.inputText.trim()) {
-        this.showMessage('请输入要压缩的JSON数据', 'error')
-        return
-      }
-
-      try {
-        // 先解析JSON确保格式正确
-        const parsed = JSON.parse(this.inputText)
-        // 压缩输出，无缩进，直接覆盖输入框
-        this.inputText = JSON.stringify(parsed)
-        this.parsedJson = parsed
-        this.expandedPaths.clear()
-        this.expandAll()
-        this.showMessage('JSON压缩成功！', 'success')
-      } catch (error) {
-        this.parsedJson = null
-        this.showMessage('JSON格式错误：' + error.message, 'error')
-      }
-    },
-
-    clearAll() {
-      this.inputText = ''
-      this.message = ''
-      this.parsedJson = null
-      this.expandedPaths.clear()
-      this.$nextTick(() => {
-        this.autoResize()
-      })
-    },
-
-    showMessage(text, type) {
-      this.message = text
-      this.messageType = type
-      setTimeout(() => {
-        this.message = ''
-      }, 3000)
-    },
-
-    autoResize() {
-      const area = this.$refs.inputArea
-      if (area && area instanceof HTMLTextAreaElement) {
-        area.style.height = 'auto'
-        area.style.height = area.scrollHeight + 'px'
-      }
-    },
-
-    togglePath(path) {
-      if (this.expandedPaths.has(path)) {
-        this.expandedPaths.delete(path)
-      } else {
-        this.expandedPaths.add(path)
-      }
-      this.expandedPaths = new Set(this.expandedPaths)
-    },
-
-    expandAll() {
-      const collectPaths = (obj, currentPath = '') => {
-        if (obj && typeof obj === 'object') {
-          this.expandedPaths.add(currentPath)
-          Object.keys(obj).forEach(key => {
-            const newPath = currentPath ? `${currentPath}.${key}` : key
-            collectPaths(obj[key], newPath)
-          })
-        }
-      }
-      collectPaths(this.parsedJson, 'root')
-      this.expandedPaths = new Set(this.expandedPaths)
-    },
-
-    collapseAll() {
-      this.expandedPaths.clear()
-      this.expandedPaths = new Set(this.expandedPaths)
-    }
+  try {
+    // 先解析JSON确保格式正确
+    const parsed = JSON.parse(inputText.value)
+    // 格式化输出，使用2个空格缩进，直接覆盖输入框
+    inputText.value = JSON.stringify(parsed, null, 2)
+    parsedJson.value = parsed
+    expandedPaths.value.clear()
+    expandAll()
+    showMessage('JSON格式化成功！', 'success')
+  } catch (error) {
+    parsedJson.value = null
+    showMessage('JSON格式错误：' + error.message, 'error')
   }
 }
+
+const compressJson = () => {
+  if (!inputText.value.trim()) {
+    showMessage('请输入要压缩的JSON数据', 'error')
+    return
+  }
+
+  try {
+    // 先解析JSON确保格式正确
+    const parsed = JSON.parse(inputText.value)
+    // 压缩输出，无缩进，直接覆盖输入框
+    inputText.value = JSON.stringify(parsed)
+    parsedJson.value = parsed
+    expandedPaths.value.clear()
+    expandAll()
+    showMessage('JSON压缩成功！', 'success')
+  } catch (error) {
+    parsedJson.value = null
+    showMessage('JSON格式错误：' + error.message, 'error')
+  }
+}
+
+const clearAll = () => {
+  inputText.value = ''
+  message.value = ''
+  parsedJson.value = null
+  expandedPaths.value.clear()
+  nextTick(() => {
+    autoResize()
+  })
+}
+
+const showMessage = (text, type) => {
+  message.value = text
+  messageType.value = type
+  setTimeout(() => {
+    message.value = ''
+  }, 3000)
+}
+
+const autoResize = () => {
+  const area = inputArea.value
+  if (area && area instanceof HTMLTextAreaElement) {
+    area.style.height = 'auto'
+    area.style.height = area.scrollHeight + 'px'
+  }
+}
+
+const togglePath = (path) => {
+  if (expandedPaths.value.has(path)) {
+    expandedPaths.value.delete(path)
+  } else {
+    expandedPaths.value.add(path)
+  }
+  expandedPaths.value = new Set(expandedPaths.value)
+}
+
+const expandAll = () => {
+  const collectPaths = (obj, currentPath = '') => {
+    if (obj && typeof obj === 'object') {
+      expandedPaths.value.add(currentPath)
+      Object.keys(obj).forEach(key => {
+        const newPath = currentPath ? `${currentPath}.${key}` : key
+        collectPaths(obj[key], newPath)
+      })
+    }
+  }
+  collectPaths(parsedJson.value, 'root')
+  expandedPaths.value = new Set(expandedPaths.value)
+}
+
+const collapseAll = () => {
+  expandedPaths.value.clear()
+  expandedPaths.value = new Set(expandedPaths.value)
+}
+
+watch(inputText, () => {
+  nextTick(() => autoResize())
+  autoParseJson()
+})
+
+onMounted(() => {
+  autoResize()
+})
+
+onBeforeUnmount(() => {
+  // 清理定时器
+  if (parseTimeout.value) {
+    clearTimeout(parseTimeout.value)
+  }
+})
 </script>
 
 <style scoped>

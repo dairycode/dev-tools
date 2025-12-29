@@ -58,113 +58,107 @@
   </div>
 </template>
 
-<script>
+<script setup lang="ts">
+import { ref, watch } from 'vue'
 import CryptoJS from 'crypto-js'
 
-export default {
-  name: 'HashEncoder',
-  data() {
-    return {
-      inputText: '',
-      hashResult: '',
-      selectedHashType: 'md5',
-      message: '',
-      messageType: ''
+type MessageType = 'success' | 'error'
+type HashType = 'md5' | 'sha1' | 'sha256' | 'sha512'
+
+const inputText = ref<string>('')
+const hashResult = ref<string>('')
+const selectedHashType = ref<HashType>('md5')
+const message = ref<string>('')
+const messageType = ref<MessageType>('success')
+const inputArea = ref<HTMLTextAreaElement | null>(null)
+
+const calculateHash = async (): Promise<void> => {
+  if (!inputText.value.trim()) {
+    hashResult.value = ''
+    return
+  }
+
+  try {
+    const text = inputText.value.trim()
+    let result = ''
+
+    switch (selectedHashType.value) {
+      case 'md5':
+        result = CryptoJS.MD5(text).toString()
+        break
+      case 'sha1':
+        result = CryptoJS.SHA1(text).toString()
+        break
+      case 'sha256':
+        result = CryptoJS.SHA256(text).toString()
+        break
+      case 'sha512':
+        result = CryptoJS.SHA512(text).toString()
+        break
+      default:
+        throw new Error('不支持的哈希算法')
     }
-  },
-  watch: {
-    inputText(newVal) {
-      if (newVal.trim()) {
-        this.calculateHash()
-      } else {
-        this.hashResult = ''
-      }
-    },
-    selectedHashType() {
-      if (this.inputText.trim()) {
-        this.calculateHash()
-      }
-    }
-  },
-  methods: {
-    async calculateHash() {
-      if (!this.inputText.trim()) {
-        this.hashResult = ''
-        return
-      }
 
-      try {
-        const text = this.inputText.trim()
-        let result = ''
-
-        switch (this.selectedHashType) {
-          case 'md5':
-            result = CryptoJS.MD5(text).toString()
-            break
-          case 'sha1':
-            result = CryptoJS.SHA1(text).toString()
-            break
-          case 'sha256':
-            result = CryptoJS.SHA256(text).toString()
-            break
-          case 'sha512':
-            result = CryptoJS.SHA512(text).toString()
-            break
-          default:
-            throw new Error('不支持的哈希算法')
-        }
-
-        this.hashResult = result
-      } catch (error) {
-        this.showMessage('Hash计算失败：' + error.message, 'error')
-      }
-    },
-
-
-
-    async copyResult() {
-      if (!this.hashResult) return
-      
-      try {
-        await navigator.clipboard.writeText(this.hashResult)
-        this.showMessage('Hash值已复制到剪贴板！', 'success')
-      } catch (error) {
-        const textArea = document.createElement('textarea')
-        textArea.value = this.hashResult
-        document.body.appendChild(textArea)
-        textArea.select()
-        document.execCommand('copy')
-        document.body.removeChild(textArea)
-        this.showMessage('Hash值已复制到剪贴板！', 'success')
-      }
-    },
-
-    clearAll() {
-      this.inputText = ''
-      this.hashResult = ''
-      this.message = ''
-      this.$nextTick(() => {
-        this.autoResize()
-      })
-    },
-
-    showMessage(text, type) {
-      this.message = text
-      this.messageType = type
-      setTimeout(() => {
-        this.message = ''
-      }, 3000)
-    },
-
-    autoResize() {
-      const area = this.$refs.inputArea
-      if (area && area instanceof HTMLTextAreaElement) {
-        area.style.height = 'auto'
-        area.style.height = area.scrollHeight + 'px'
-      }
-    }
+    hashResult.value = result
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error)
+    showMessage('Hash计算失败：' + errorMessage, 'error')
   }
 }
+
+const copyResult = async (): Promise<void> => {
+  if (!hashResult.value) return
+
+  try {
+    await navigator.clipboard.writeText(hashResult.value)
+    showMessage('Hash值已复制到剪贴板！', 'success')
+  } catch (error) {
+    const textArea = document.createElement('textarea')
+    textArea.value = hashResult.value
+    document.body.appendChild(textArea)
+    textArea.select()
+    document.execCommand('copy')
+    document.body.removeChild(textArea)
+    showMessage('Hash值已复制到剪贴板！', 'success')
+  }
+}
+
+const clearAll = (): void => {
+  inputText.value = ''
+  hashResult.value = ''
+  message.value = ''
+  autoResize()
+}
+
+const showMessage = (text: string, type: MessageType): void => {
+  message.value = text
+  messageType.value = type
+  setTimeout(() => {
+    message.value = ''
+  }, 3000)
+}
+
+const autoResize = (): void => {
+  const area = inputArea.value
+  if (area && area instanceof HTMLTextAreaElement) {
+    area.style.height = 'auto'
+    area.style.height = area.scrollHeight + 'px'
+  }
+}
+
+watch(inputText, (newVal: string) => {
+  if (newVal.trim()) {
+    calculateHash()
+  } else {
+    hashResult.value = ''
+  }
+})
+
+watch(selectedHashType, () => {
+  if (inputText.value.trim()) {
+    calculateHash()
+  }
+})
 </script>
 
 <style scoped>

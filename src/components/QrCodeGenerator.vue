@@ -44,104 +44,102 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { ref, watch, onMounted, nextTick } from 'vue'
 import QRCode from 'qrcode'
-import { nextTick } from 'vue'
 
-export default {
-  name: 'QrCodeGenerator',
-  data() {
-    return {
-      inputText: '',
-      qrCodeGenerated: false,
-      isLoading: false,
-      message: '',
-      messageType: 'success'
+const inputText = ref('')
+const qrCodeGenerated = ref(false)
+const isLoading = ref(false)
+const message = ref('')
+const messageType = ref('success')
+const inputArea = ref(null)
+const qrCanvas = ref(null)
+
+const generateQR = async () => {
+  if (!inputText.value.trim()) {
+    showMessage('请输入要生成二维码的内容', 'error')
+    return
+  }
+  isLoading.value = true
+  qrCodeGenerated.value = true
+  await nextTick()
+  try {
+    // 清除之前的二维码
+    if (qrCanvas.value) {
+      const ctx = qrCanvas.value.getContext('2d')
+      ctx && ctx.clearRect(0, 0, qrCanvas.value.width, qrCanvas.value.height)
     }
-  },
-  watch: {
-    inputText() {
-      this.$nextTick(() => this.autoResize())
-    }
-  },
-  mounted() {
-    this.autoResize()
-  },
-  methods: {
-    async generateQR() {
-      if (!this.inputText.trim()) {
-        this.showMessage('请输入要生成二维码的内容', 'error')
-        return
+    // 生成新的二维码
+    await QRCode.toCanvas(qrCanvas.value, inputText.value, {
+      width: 200,
+      margin: 2,
+      color: {
+        dark: '#000000',
+        light: '#FFFFFF'
       }
-      this.isLoading = true
-      this.qrCodeGenerated = true
-      await nextTick()
-      try {
-        // 清除之前的二维码
-        if (this.$refs.qrCanvas) {
-          const ctx = this.$refs.qrCanvas.getContext('2d')
-          ctx && ctx.clearRect(0, 0, this.$refs.qrCanvas.width, this.$refs.qrCanvas.height)
-        }
-        // 生成新的二维码
-        await QRCode.toCanvas(this.$refs.qrCanvas, this.inputText, {
-          width: 200,
-          margin: 2,
-          color: {
-            dark: '#000000',
-            light: '#FFFFFF'
-          }
-        })
-        this.showMessage('二维码生成成功！', 'success')
-      } catch (error) {
-        this.showMessage('二维码生成失败：' + error.message, 'error')
-      } finally {
-        this.isLoading = false
-      }
-    },
-    downloadQR() {
-      if (!this.qrCodeGenerated || !this.$refs.qrCanvas) {
-        this.showMessage('请先生成二维码', 'error')
-        return
-      }
-      try {
-        const canvas = this.$refs.qrCanvas
-        const link = document.createElement('a')
-        link.download = 'qrcode.png'
-        link.href = canvas.toDataURL()
-        document.body.appendChild(link)
-        link.click()
-        document.body.removeChild(link)
-        this.showMessage('二维码下载成功！', 'success')
-      } catch (error) {
-        this.showMessage('下载失败：' + error.message, 'error')
-      }
-    },
-    clearAll() {
-      this.inputText = ''
-      this.qrCodeGenerated = false
-      this.message = ''
-      if (this.$refs.qrCanvas) {
-        const ctx = this.$refs.qrCanvas.getContext('2d')
-        ctx && ctx.clearRect(0, 0, this.$refs.qrCanvas.width, this.$refs.qrCanvas.height)
-      }
-      this.$nextTick(() => this.autoResize())
-    },
-    showMessage(text, type) {
-      this.message = text
-      this.messageType = type
-      setTimeout(() => {
-        this.message = ''
-      }, 3000)
-    },
-    autoResize() {
-      const area = this.$refs.inputArea
-      if (area && area instanceof HTMLTextAreaElement) {
-        area.style.height = 'auto'
-        area.style.height = area.scrollHeight + 'px'
-      }
-    }
+    })
+    showMessage('二维码生成成功！', 'success')
+  } catch (error) {
+    showMessage('二维码生成失败：' + error.message, 'error')
+  } finally {
+    isLoading.value = false
   }
 }
+
+const downloadQR = () => {
+  if (!qrCodeGenerated.value || !qrCanvas.value) {
+    showMessage('请先生成二维码', 'error')
+    return
+  }
+  try {
+    const canvas = qrCanvas.value
+    const link = document.createElement('a')
+    link.download = 'qrcode.png'
+    link.href = canvas.toDataURL()
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    showMessage('二维码下载成功！', 'success')
+  } catch (error) {
+    showMessage('下载失败：' + error.message, 'error')
+  }
+}
+
+const clearAll = () => {
+  inputText.value = ''
+  qrCodeGenerated.value = false
+  message.value = ''
+  if (qrCanvas.value) {
+    const ctx = qrCanvas.value.getContext('2d')
+    ctx && ctx.clearRect(0, 0, qrCanvas.value.width, qrCanvas.value.height)
+  }
+  nextTick(() => autoResize())
+}
+
+const showMessage = (text, type) => {
+  message.value = text
+  messageType.value = type
+  setTimeout(() => {
+    message.value = ''
+  }, 3000)
+}
+
+const autoResize = () => {
+  const area = inputArea.value
+  if (area && area instanceof HTMLTextAreaElement) {
+    area.style.height = 'auto'
+    area.style.height = area.scrollHeight + 'px'
+  }
+}
+
+watch(inputText, () => {
+  nextTick(() => autoResize())
+})
+
+onMounted(() => {
+  autoResize()
+})
 </script>
 
 <style scoped>

@@ -37,105 +37,105 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: 'UrlEncoder',
-  data() {
-    return {
-      inputText: '',
-      message: '',
-      messageType: 'success'
-    }
-  },
-  watch: {
-    inputText() {
-      this.$nextTick(() => this.autoResize())
-    }
-  },
-  mounted() {
-    this.autoResize()
-  },
-  methods: {
-    encodeURL() {
-      if (!this.inputText.trim()) {
-        this.showMessage('请输入要编码的文本', 'error')
-        return
-      }
-      
-      try {
-        // 使用 encodeURIComponent 进行完整的URL编码
-        const encoded = encodeURIComponent(this.inputText)
-        this.inputText = encoded
-        this.showMessage('URL编码成功！', 'success')
-      } catch (error) {
-        this.showMessage('编码失败：' + error.message, 'error')
-      }
-    },
-    
-    decodeURL() {
-      if (!this.inputText.trim()) {
-        this.showMessage('请输入要解码的文本', 'error')
-        return
-      }
-      
-      try {
-        // 使用 decodeURIComponent 进行URL解码
-        const decoded = decodeURIComponent(this.inputText)
-        this.inputText = decoded
-        this.showMessage('URL解码成功！', 'success')
-      } catch (error) {
-        // 如果 decodeURIComponent 失败，尝试 decodeURI
-        try {
-          const decoded = decodeURI(this.inputText)
-          this.inputText = decoded
-          this.showMessage('URI解码成功！', 'success')
-        } catch (secondError) {
-          this.showMessage('解码失败：' + error.message, 'error')
-        }
-      }
-    },
-    
-    encodeURI() {
-      if (!this.inputText.trim()) {
-        this.showMessage('请输入要编码的文本', 'error')
-        return
-      }
-      
-      try {
-        // 使用 encodeURI 进行URI编码（保留某些字符）
-        const encoded = encodeURI(this.inputText)
-        this.inputText = encoded
-        this.showMessage('URI编码成功！', 'success')
-      } catch (error) {
-        this.showMessage('编码失败：' + error.message, 'error')
-      }
-    },
-    
-    clearAll() {
-      this.inputText = ''
-      this.message = ''
-      this.$nextTick(() => {
-        this.autoResize()
-      })
-    },
-    
-    showMessage(text, type) {
-      this.message = text
-      this.messageType = type
-      setTimeout(() => {
-        this.message = ''
-      }, 3000)
-    },
-    
-    autoResize() {
-      const area = this.$refs.inputArea
-      if (area && area instanceof HTMLTextAreaElement) {
-        area.style.height = 'auto'
-        area.style.height = area.scrollHeight + 'px'
-      }
+<script setup lang="ts">
+import { ref, watch, onMounted, nextTick } from 'vue'
+
+type MessageType = 'success' | 'error'
+
+const inputText = ref<string>('')
+const message = ref<string>('')
+const messageType = ref<MessageType>('success')
+const inputArea = ref<HTMLTextAreaElement | null>(null)
+
+const encodeURL = (): void => {
+  if (!inputText.value.trim()) {
+    showMessage('请输入要编码的文本', 'error')
+    return
+  }
+
+  try {
+    // 使用 encodeURIComponent 进行完整的URL编码
+    const encoded = encodeURIComponent(inputText.value)
+    inputText.value = encoded
+    showMessage('URL编码成功！', 'success')
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error)
+    showMessage('编码失败：' + errorMessage, 'error')
+  }
+}
+
+const decodeURL = (): void => {
+  if (!inputText.value.trim()) {
+    showMessage('请输入要解码的文本', 'error')
+    return
+  }
+
+  try {
+    // 使用 decodeURIComponent 进行URL解码
+    const decoded = decodeURIComponent(inputText.value)
+    inputText.value = decoded
+    showMessage('URL解码成功！', 'success')
+  } catch (error) {
+    // 如果 decodeURIComponent 失败，尝试 decodeURI
+    try {
+      const decoded = decodeURI(inputText.value)
+      inputText.value = decoded
+      showMessage('URI解码成功！', 'success')
+    } catch (secondError) {
+      const errorMessage = error instanceof Error ? error.message : String(error)
+      showMessage('解码失败：' + errorMessage, 'error')
     }
   }
 }
+
+const encodeURI = (): void => {
+  if (!inputText.value.trim()) {
+    showMessage('请输入要编码的文本', 'error')
+    return
+  }
+
+  try {
+    // 使用 encodeURI 进行URI编码（保留某些字符）
+    const encoded = globalThis.encodeURI(inputText.value)
+    inputText.value = encoded
+    showMessage('URI编码成功！', 'success')
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error)
+    showMessage('编码失败：' + errorMessage, 'error')
+  }
+}
+
+const clearAll = (): void => {
+  inputText.value = ''
+  message.value = ''
+  nextTick(() => {
+    autoResize()
+  })
+}
+
+const showMessage = (text: string, type: MessageType): void => {
+  message.value = text
+  messageType.value = type
+  setTimeout(() => {
+    message.value = ''
+  }, 3000)
+}
+
+const autoResize = (): void => {
+  const area = inputArea.value
+  if (area && area instanceof HTMLTextAreaElement) {
+    area.style.height = 'auto'
+    area.style.height = area.scrollHeight + 'px'
+  }
+}
+
+watch(inputText, () => {
+  nextTick(() => autoResize())
+})
+
+onMounted(() => {
+  autoResize()
+})
 </script>
 
 <style scoped>

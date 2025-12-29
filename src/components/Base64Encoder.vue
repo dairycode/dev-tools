@@ -34,89 +34,88 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: 'Base64Encoder',
-  data() {
-    return {
-      inputText: '',
-      message: '',
-      messageType: 'success'
-    }
-  },
-  watch: {
-    inputText() {
-      this.$nextTick(() => this.autoResize())
-    }
-  },
-  mounted() {
-    this.autoResize()
-  },
-  methods: {
-    encodeBase64() {
-      if (!this.inputText.trim()) {
-        this.showMessage('请输入要编码的文本', 'error')
-        return
-      }
-      
-      try {
-        const encoded = btoa(this.inputText)
-        this.inputText = encoded
-        this.showMessage('Base64编码成功！', 'success')
-      } catch (error) {
-        this.showMessage('编码失败：' + error.message, 'error')
-      }
-    },
-    
-    decodeBase64() {
-      if (!this.inputText.trim()) {
-        this.showMessage('请输入要解码的文本', 'error')
-        return
-      }
-      
-      try {
-        // 检查输入是否为有效的Base64格式
-        const base64Regex = /^[A-Za-z0-9+/]*={0,2}$/
-        const cleanInput = this.inputText.trim()
-        
-        if (!base64Regex.test(cleanInput) || cleanInput.length % 4 !== 0) {
-          this.showMessage('请输入有效的Base64编码文本', 'error')
-          return
-        }
-        
-        const decoded = atob(this.inputText)
-        this.inputText = decoded
-        this.showMessage('Base64解码成功！', 'success')
-      } catch (error) {
-        this.showMessage('解码失败：' + error.message, 'error')
-      }
-    },
-    
-    clearAll() {
-      this.inputText = ''
-      this.message = ''
-      this.$nextTick(() => {
-        this.autoResize()
-      })
-    },
-    
-    showMessage(text, type) {
-      this.message = text
-      this.messageType = type
-      setTimeout(() => {
-        this.message = ''
-      }, 3000)
-    },
-    
-    autoResize() {
-      const area = this.$refs.inputArea
-      if (area && area instanceof HTMLTextAreaElement) {
-        area.style.height = 'auto'
-        area.style.height = area.scrollHeight + 'px'
-      }
-    }
+<script setup lang="ts">
+import { ref, watch, onMounted, nextTick } from 'vue'
+
+type MessageType = 'success' | 'error'
+
+const inputText = ref<string>('')
+const message = ref<string>('')
+const messageType = ref<MessageType>('success')
+const inputArea = ref<HTMLTextAreaElement | null>(null)
+
+const encodeBase64 = (): void => {
+  if (!inputText.value.trim()) {
+    showMessage('请输入要编码的文本', 'error')
+    return
+  }
+
+  try {
+    const encoded = btoa(inputText.value)
+    inputText.value = encoded
+    showMessage('Base64编码成功！', 'success')
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error)
+    showMessage('编码失败：' + errorMessage, 'error')
   }
 }
+
+const decodeBase64 = (): void => {
+  if (!inputText.value.trim()) {
+    showMessage('请输入要解码的文本', 'error')
+    return
+  }
+
+  try {
+    // 检查输入是否为有效的Base64格式
+    const base64Regex = /^[A-Za-z0-9+/]*={0,2}$/
+    const cleanInput = inputText.value.trim()
+
+    if (!base64Regex.test(cleanInput) || cleanInput.length % 4 !== 0) {
+      showMessage('请输入有效的Base64编码文本', 'error')
+      return
+    }
+
+    const decoded = atob(inputText.value)
+    inputText.value = decoded
+    showMessage('Base64解码成功！', 'success')
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error)
+    showMessage('解码失败：' + errorMessage, 'error')
+  }
+}
+
+const clearAll = (): void => {
+  inputText.value = ''
+  message.value = ''
+  nextTick(() => {
+    autoResize()
+  })
+}
+
+const showMessage = (text: string, type: MessageType): void => {
+  message.value = text
+  messageType.value = type
+  setTimeout(() => {
+    message.value = ''
+  }, 3000)
+}
+
+const autoResize = (): void => {
+  const area = inputArea.value
+  if (area && area instanceof HTMLTextAreaElement) {
+    area.style.height = 'auto'
+    area.style.height = area.scrollHeight + 'px'
+  }
+}
+
+watch(inputText, () => {
+  nextTick(() => autoResize())
+})
+
+onMounted(() => {
+  autoResize()
+})
 </script>
 
 <style scoped>

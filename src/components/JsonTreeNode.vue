@@ -48,76 +48,82 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: 'JsonTreeNode',
-  props: {
-    data: {
-      required: true
-    },
-    keyName: {
-      type: [String, Number],
-      required: true
-    },
-    level: {
-      type: Number,
-      default: 0
-    },
-    expandedPaths: {
-      type: Set,
-      required: true
-    },
-    parentPath: {
-      type: String,
-      default: ''
-    }
+<script setup>
+import { computed } from 'vue'
+
+const props = defineProps({
+  data: {
+    required: true
   },
-  computed: {
-    currentPath() {
-      return this.parentPath ? `${this.parentPath}.${this.keyName}` : String(this.keyName)
-    },
-    isExpanded() {
-      return this.expandedPaths.has(this.currentPath)
-    },
-    isExpandable() {
-      return this.data !== null && typeof this.data === 'object'
-    },
-    isArray() {
-      return Array.isArray(this.data)
-    },
-    valueType() {
-      if (this.data === null) return 'null'
-      if (typeof this.data === 'string') return 'string'
-      if (typeof this.data === 'number') return 'number'
-      if (typeof this.data === 'boolean') return 'boolean'
-      return 'unknown'
-    },
-    displayKey() {
-      return typeof this.keyName === 'number' ? `[${this.keyName}]` : this.keyName
-    },
-    displayValue() {
-      if (this.data === null) return 'null'
-      if (typeof this.data === 'string') return `"${this.data}"`
-      if (typeof this.data === 'boolean') return String(this.data)
-      if (typeof this.data === 'number') return String(this.data)
-      return String(this.data)
-    },
-    collapsedPreview() {
-      if (!this.isExpandable) return ''
-      if (this.isArray) {
-        const length = this.data.length
-        return length === 0 ? '' : `${length} item${length !== 1 ? 's' : ''}`
-      } else {
-        const keys = Object.keys(this.data)
-        return keys.length === 0 ? '' : `${keys.length} key${keys.length !== 1 ? 's' : ''}`
-      }
-    }
+  keyName: {
+    type: [String, Number],
+    required: true
   },
-  methods: {
-    toggle() {
-      this.$emit('toggle', this.currentPath)
-    }
+  level: {
+    type: Number,
+    default: 0
+  },
+  expandedPaths: {
+    type: Set,
+    required: true
+  },
+  parentPath: {
+    type: String,
+    default: ''
   }
+})
+
+const emit = defineEmits(['toggle'])
+
+const currentPath = computed(() => {
+  return props.parentPath ? `${props.parentPath}.${props.keyName}` : String(props.keyName)
+})
+
+const isExpanded = computed(() => {
+  return props.expandedPaths.has(currentPath.value)
+})
+
+const isExpandable = computed(() => {
+  return props.data !== null && typeof props.data === 'object'
+})
+
+const isArray = computed(() => {
+  return Array.isArray(props.data)
+})
+
+const valueType = computed(() => {
+  if (props.data === null) return 'null'
+  if (typeof props.data === 'string') return 'string'
+  if (typeof props.data === 'number') return 'number'
+  if (typeof props.data === 'boolean') return 'boolean'
+  return 'unknown'
+})
+
+const displayKey = computed(() => {
+  return typeof props.keyName === 'number' ? `[${props.keyName}]` : props.keyName
+})
+
+const displayValue = computed(() => {
+  if (props.data === null) return 'null'
+  if (typeof props.data === 'string') return `"${props.data}"`
+  if (typeof props.data === 'boolean') return String(props.data)
+  if (typeof props.data === 'number') return String(props.data)
+  return String(props.data)
+})
+
+const collapsedPreview = computed(() => {
+  if (!isExpandable.value) return ''
+  if (isArray.value) {
+    const length = props.data.length
+    return length === 0 ? '' : `${length} item${length !== 1 ? 's' : ''}`
+  } else {
+    const keys = Object.keys(props.data)
+    return keys.length === 0 ? '' : `${keys.length} key${keys.length !== 1 ? 's' : ''}`
+  }
+})
+
+const toggle = () => {
+  emit('toggle', currentPath.value)
 }
 </script>
 

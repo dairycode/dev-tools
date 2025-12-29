@@ -52,8 +52,8 @@
   </div>
 </template>
 
-<script>
-import { onMounted } from 'vue'
+<script setup lang="ts">
+import { ref, computed, onMounted } from 'vue'
 import { useTheme } from './composables/useTheme'
 import UrlEncoder from './components/UrlEncoder.vue'
 import TimestampConverter from './components/TimestampConverter.vue'
@@ -62,92 +62,79 @@ import JsonFormatter from './components/JsonFormatter.vue'
 import Base64Encoder from './components/Base64Encoder.vue'
 import HashEncoder from './components/HashEncoder.vue'
 
-export default {
-  name: 'App',
-  components: {
-    UrlEncoder,
-    TimestampConverter,
-    QrCodeGenerator,
-    JsonFormatter,
-    Base64Encoder,
-    HashEncoder
-  },
-  setup() {
-    const { isDark, toggleTheme, initTheme } = useTheme()
-
-    onMounted(() => {
-      initTheme()
-    })
-
-    return {
-      isDark,
-      toggleTheme
-    }
-  },
-  data() {
-    return {
-      activeTab: 'url',
-      tabs: [
-        {
-          key: 'url',
-          title: 'URL编码/解码',
-          icon: '🔗',
-          component: 'UrlEncoder',
-          description: 'URL编码和解码工具，支持特殊字符转换'
-        },
-        {
-          key: 'base64',
-          title: 'Base64编码/解码',
-          icon: '🔐',
-          component: 'Base64Encoder',
-          description: 'Base64编码和解码工具'
-        },
-        {
-          key: 'hash',
-          title: 'Hash编码',
-          icon: '🔒',
-          component: 'HashEncoder',
-          description: 'MD5、SHA等Hash计算工具'
-        },
-        {
-          key: 'timestamp',
-          title: '时间戳转换',
-          icon: '⏰',
-          component: 'TimestampConverter',
-          description: 'Unix时间戳与日期时间互转工具'
-        },
-        {
-          key: 'qrcode',
-          title: '二维码生成',
-          icon: '📱',
-          component: 'QrCodeGenerator',
-          description: '生成文本、URL的二维码图片'
-        },
-        {
-          key: 'json',
-          title: 'JSON格式化',
-          icon: '📄',
-          component: 'JsonFormatter',
-          description: 'JSON格式化和美化工具'
-        }
-      ]
-    }
-  },
-  computed: {
-    currentTabComponent() {
-      const tab = this.tabs.find(t => t.key === this.activeTab)
-      return tab ? tab.component : 'UrlEncoder'
-    },
-    currentTabTitle() {
-      const tab = this.tabs.find(t => t.key === this.activeTab)
-      return tab ? tab.title : ''
-    },
-    currentTabDescription() {
-      const tab = this.tabs.find(t => t.key === this.activeTab)
-      return tab ? tab.description : ''
-    }
-  }
+interface Tab {
+  key: string
+  title: string
+  icon: string
+  component: string
+  description: string
 }
+
+const { isDark, toggleTheme, initTheme } = useTheme()
+
+const activeTab = ref<string>('url')
+const tabs = ref<Tab[]>([
+  {
+    key: 'url',
+    title: 'URL编码/解码',
+    icon: '🔗',
+    component: 'UrlEncoder',
+    description: 'URL编码和解码工具，支持特殊字符转换'
+  },
+  {
+    key: 'base64',
+    title: 'Base64编码/解码',
+    icon: '🔐',
+    component: 'Base64Encoder',
+    description: 'Base64编码和解码工具'
+  },
+  {
+    key: 'hash',
+    title: 'Hash编码',
+    icon: '🔒',
+    component: 'HashEncoder',
+    description: 'MD5、SHA等Hash计算工具'
+  },
+  {
+    key: 'timestamp',
+    title: '时间戳转换',
+    icon: '⏰',
+    component: 'TimestampConverter',
+    description: 'Unix时间戳与日期时间互转工具'
+  },
+  {
+    key: 'qrcode',
+    title: '二维码生成',
+    icon: '📱',
+    component: 'QrCodeGenerator',
+    description: '生成文本、URL的二维码图片'
+  },
+  {
+    key: 'json',
+    title: 'JSON格式化',
+    icon: '📄',
+    component: 'JsonFormatter',
+    description: 'JSON格式化和美化工具'
+  }
+])
+
+const componentMap: Record<string, any> = {
+  UrlEncoder,
+  Base64Encoder,
+  HashEncoder,
+  TimestampConverter,
+  QrCodeGenerator,
+  JsonFormatter
+}
+
+const currentTabComponent = computed(() => {
+  const tab = tabs.value.find(t => t.key === activeTab.value)
+  return tab ? componentMap[tab.component] : UrlEncoder
+})
+
+onMounted(() => {
+  initTheme()
+})
 </script>
 
 <style scoped>

@@ -71,7 +71,7 @@
               id="date-input"
               v-model="dateInput"
               class="date-input clickable-input"
-              ref="dateInput"
+              ref="dateInputRef"
               @click="focusDateInput"
             >
           </div>
@@ -82,7 +82,7 @@
               id="time-input"
               v-model="timeInput"
               class="time-input clickable-input"
-              ref="timeInput"
+              ref="timeInputRef"
               @click="focusTimeInput"
             >
           </div>
@@ -136,149 +136,146 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: 'TimestampConverter',
-  data() {
-    return {
-      timestampInput: '',
-      dateInput: '',
-      timeInput: '',
-      timestampResult: {
-        localTime: '',
-        utcTime: '',
-        isoTime: '',
-        seconds: '',
-        milliseconds: ''
-      },
-      dateResult: {
-        selectedDateTime: '',
-        seconds: '',
-        milliseconds: '',
-        localTime: '',
-        utcTime: ''
-      },
-      message: '',
-      messageType: 'success'
-    }
-  },
-  mounted() {
-    this.getCurrentTimestamp()
-    this.setCurrentDateTime()
-  },
-  methods: {
-    convertTimestampToDate() {
-      if (!this.timestampInput.trim()) {
-        this.showMessage('请输入时间戳', 'error')
-        return
-      }
-      
-      try {
-        const timestamp = parseInt(this.timestampInput)
-        if (isNaN(timestamp)) {
-          throw new Error('无效的时间戳格式')
-        }
-        
-        const isMilliseconds = timestamp > 1000000000000
-        const date = new Date(isMilliseconds ? timestamp : timestamp * 1000)
-        
-        this.timestampResult = {
-          localTime: date.toLocaleString('zh-CN'),
-          utcTime: date.toUTCString(),
-          isoTime: date.toISOString(),
-          seconds: Math.floor(date.getTime() / 1000).toString(),
-          milliseconds: date.getTime().toString()
-        }
-        
-        this.showMessage('时间戳转换成功！', 'success')
-      } catch (error) {
-        this.showMessage('转换失败：' + error.message, 'error')
-      }
-    },
-    
-    convertDateToTimestamp() {
-      if (!this.dateInput || !this.timeInput) {
-        this.showMessage('请选择日期和时间', 'error')
-        return
-      }
-      
-      try {
-        const dateTimeString = `${this.dateInput}T${this.timeInput}`
-        const date = new Date(dateTimeString)
-        
-        if (isNaN(date.getTime())) {
-          throw new Error('无效的日期时间格式')
-        }
-        
-        this.dateResult = {
-          selectedDateTime: date.toLocaleString('zh-CN'),
-          seconds: Math.floor(date.getTime() / 1000).toString(),
-          milliseconds: date.getTime().toString(),
-          localTime: date.toLocaleString('zh-CN'),
-          utcTime: date.toUTCString()
-        }
-        
-        this.showMessage('日期转换成功！', 'success')
-      } catch (error) {
-        this.showMessage('转换失败：' + error.message, 'error')
-      }
-    },
-    
-    getCurrentTimestamp() {
-      const now = Math.floor(Date.now() / 1000)
-      this.timestampInput = now.toString()
-      this.convertTimestampToDate()
-    },
-    
-    setCurrentDateTime() {
-      const now = new Date()
-      this.dateInput = now.toISOString().split('T')[0]
-      this.timeInput = now.toTimeString().split(' ')[0]
-      this.convertDateToTimestamp()
-    },
-    
-    clearTimestamp() {
-      this.timestampInput = ''
-      this.timestampResult = {
-        localTime: '',
-        utcTime: '',
-        isoTime: '',
-        seconds: '',
-        milliseconds: ''
-      }
-      this.message = ''
-    },
-    
-    clearDateTime() {
-      this.dateInput = ''
-      this.timeInput = ''
-      this.dateResult = {
-        selectedDateTime: '',
-        seconds: '',
-        milliseconds: '',
-        localTime: '',
-        utcTime: ''
-      }
-      this.message = ''
-    },
-    
-    showMessage(text, type) {
-      this.message = text
-      this.messageType = type
-      setTimeout(() => {
-        this.message = ''
-      }, 3000)
-    },
+<script setup>
+import { ref, onMounted } from 'vue'
 
-    focusDateInput() {
-      this.$refs.dateInput.showPicker()
-    },
+const timestampInput = ref('')
+const dateInput = ref('')
+const timeInput = ref('')
+const timestampResult = ref({
+  localTime: '',
+  utcTime: '',
+  isoTime: '',
+  seconds: '',
+  milliseconds: ''
+})
+const dateResult = ref({
+  selectedDateTime: '',
+  seconds: '',
+  milliseconds: '',
+  localTime: '',
+  utcTime: ''
+})
+const message = ref('')
+const messageType = ref('success')
+const dateInputRef = ref(null)
+const timeInputRef = ref(null)
 
-    focusTimeInput() {
-      this.$refs.timeInput.showPicker()
+const convertTimestampToDate = () => {
+  if (!timestampInput.value.trim()) {
+    showMessage('请输入时间戳', 'error')
+    return
+  }
+
+  try {
+    const timestamp = parseInt(timestampInput.value)
+    if (isNaN(timestamp)) {
+      throw new Error('无效的时间戳格式')
     }
+
+    const isMilliseconds = timestamp > 1000000000000
+    const date = new Date(isMilliseconds ? timestamp : timestamp * 1000)
+
+    timestampResult.value = {
+      localTime: date.toLocaleString('zh-CN'),
+      utcTime: date.toUTCString(),
+      isoTime: date.toISOString(),
+      seconds: Math.floor(date.getTime() / 1000).toString(),
+      milliseconds: date.getTime().toString()
+    }
+
+    showMessage('时间戳转换成功！', 'success')
+  } catch (error) {
+    showMessage('转换失败：' + error.message, 'error')
   }
 }
+
+const convertDateToTimestamp = () => {
+  if (!dateInput.value || !timeInput.value) {
+    showMessage('请选择日期和时间', 'error')
+    return
+  }
+
+  try {
+    const dateTimeString = `${dateInput.value}T${timeInput.value}`
+    const date = new Date(dateTimeString)
+
+    if (isNaN(date.getTime())) {
+      throw new Error('无效的日期时间格式')
+    }
+
+    dateResult.value = {
+      selectedDateTime: date.toLocaleString('zh-CN'),
+      seconds: Math.floor(date.getTime() / 1000).toString(),
+      milliseconds: date.getTime().toString(),
+      localTime: date.toLocaleString('zh-CN'),
+      utcTime: date.toUTCString()
+    }
+
+    showMessage('日期转换成功！', 'success')
+  } catch (error) {
+    showMessage('转换失败：' + error.message, 'error')
+  }
+}
+
+const getCurrentTimestamp = () => {
+  const now = Math.floor(Date.now() / 1000)
+  timestampInput.value = now.toString()
+  convertTimestampToDate()
+}
+
+const setCurrentDateTime = () => {
+  const now = new Date()
+  dateInput.value = now.toISOString().split('T')[0]
+  timeInput.value = now.toTimeString().split(' ')[0]
+  convertDateToTimestamp()
+}
+
+const clearTimestamp = () => {
+  timestampInput.value = ''
+  timestampResult.value = {
+    localTime: '',
+    utcTime: '',
+    isoTime: '',
+    seconds: '',
+    milliseconds: ''
+  }
+  message.value = ''
+}
+
+const clearDateTime = () => {
+  dateInput.value = ''
+  timeInput.value = ''
+  dateResult.value = {
+    selectedDateTime: '',
+    seconds: '',
+    milliseconds: '',
+    localTime: '',
+    utcTime: ''
+  }
+  message.value = ''
+}
+
+const showMessage = (text, type) => {
+  message.value = text
+  messageType.value = type
+  setTimeout(() => {
+    message.value = ''
+  }, 3000)
+}
+
+const focusDateInput = () => {
+  dateInputRef.value?.showPicker()
+}
+
+const focusTimeInput = () => {
+  timeInputRef.value?.showPicker()
+}
+
+onMounted(() => {
+  getCurrentTimestamp()
+  setCurrentDateTime()
+})
 </script>
 
 <style scoped>
