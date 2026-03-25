@@ -48,6 +48,16 @@
       <div class="content-body">
         <component :is="currentTabComponent" />
       </div>
+      <div class="footer">
+        <a
+          href="https://beian.miit.gov.cn/"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="beian-link"
+        >
+          沪ICP备2025122886号-2
+        </a>
+      </div>
     </div>
   </div>
 </template>
@@ -298,6 +308,23 @@ onMounted(() => {
   flex: 1;
   padding: 32px;
   overflow-y: auto;
+}
+
+.footer {
+  padding: 16px 32px;
+  text-align: center;
+  background: var(--bg-primary);
+}
+
+.beian-link {
+  color: var(--text-tertiary);
+  font-size: 12px;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.beian-link:hover {
+  color: var(--primary-color);
 }
 
 @media (max-width: 768px) {
