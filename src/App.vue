@@ -55,7 +55,7 @@
           rel="noopener noreferrer"
           class="beian-link"
         >
-          沪ICP备2025122886号-2
+          沪ICP备2026013272号-1
         </a>
       </div>
     </div>
