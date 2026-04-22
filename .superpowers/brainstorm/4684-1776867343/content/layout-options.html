@@ -1,0 +1,111 @@
+<h2>布局方案选择</h2>
+<p class="subtitle">选择你喜欢的整体布局风格，后续可以在此基础上调整细节</p>
+
+<div class="cards">
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="background:#1a1a2e;border-radius:8px;padding:16px;font-family:monospace;font-size:12px;color:#e0e0e0;min-height:200px;">
+        <div style="display:flex;height:180px;">
+          <div style="width:56px;background:#16213e;border-radius:6px;padding:8px 4px;display:flex;flex-direction:column;align-items:center;gap:12px;">
+            <div style="width:32px;height:32px;background:#0f3460;border-radius:8px;display:flex;align-items:center;justify-content:center;">🔗</div>
+            <div style="width:32px;height:32px;background:#533483;border-radius:8px;display:flex;align-items:center;justify-content:center;">🔐</div>
+            <div style="width:32px;height:32px;background:#0f3460;border-radius:8px;display:flex;align-items:center;justify-content:center;">#</div>
+            <div style="width:32px;height:32px;background:#0f3460;border-radius:8px;display:flex;align-items:center;justify-content:center;">⏱</div>
+          </div>
+          <div style="flex:1;margin-left:12px;">
+            <div style="background:#16213e;border-radius:6px;padding:12px;height:100%;">
+              <div style="color:#a0a0c0;font-size:11px;margin-bottom:8px;">Base64 编码/解码</div>
+              <div style="background:#0f1a2e;border-radius:4px;height:50px;margin-bottom:8px;padding:8px;color:#666;">输入内容...</div>
+              <div style="display:flex;gap:6px;margin-bottom:8px;">
+                <div style="background:#533483;border-radius:4px;padding:4px 12px;color:white;font-size:10px;">编码</div>
+                <div style="background:#0f3460;border-radius:4px;padding:4px 12px;color:white;font-size:10px;">解码</div>
+              </div>
+              <div style="background:#0f1a2e;border-radius:4px;height:50px;padding:8px;color:#666;">结果...</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A. 图标侧边栏</h3>
+      <p>窄侧边栏只显示图标，悬停展开名称。内容区最大化，适合工具类应用。类似 VS Code 的活动栏风格。</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="background:#fafafa;border-radius:8px;padding:16px;font-family:monospace;font-size:12px;color:#333;min-height:200px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid #e0e0e0;">
+          <span style="font-weight:bold;color:#6366f1;">DevTools</span>
+          <div style="display:flex;gap:4px;margin-left:auto;">
+            <div style="background:#f3f4f6;border-radius:4px;padding:3px 10px;font-size:10px;color:#6366f1;border:1px solid #6366f1;">URL</div>
+            <div style="background:#f3f4f6;border-radius:4px;padding:3px 10px;font-size:10px;">Base64</div>
+            <div style="background:#f3f4f6;border-radius:4px;padding:3px 10px;font-size:10px;">Hash</div>
+            <div style="background:#f3f4f6;border-radius:4px;padding:3px 10px;font-size:10px;">时间戳</div>
+            <div style="background:#f3f4f6;border-radius:4px;padding:3px 10px;font-size:10px;">二维码</div>
+            <div style="background:#f3f4f6;border-radius:4px;padding:3px 10px;font-size:10px;">JSON</div>
+          </div>
+        </div>
+        <div style="background:white;border:1px solid #e5e7eb;border-radius:6px;padding:12px;min-height:150px;">
+          <div style="color:#999;font-size:11px;margin-bottom:8px;">URL 编码/解码</div>
+          <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:4px;height:45px;margin-bottom:8px;padding:8px;color:#999;">输入内容...</div>
+          <div style="display:flex;gap:6px;margin-bottom:8px;">
+            <div style="background:#6366f1;border-radius:4px;padding:4px 12px;color:white;font-size:10px;">编码</div>
+            <div style="background:#e0e7ff;border-radius:4px;padding:4px 12px;color:#6366f1;font-size:10px;">解码</div>
+          </div>
+          <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:4px;height:45px;padding:8px;color:#999;">结果...</div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B. 顶部标签栏</h3>
+      <p>顶部导航 + 标签页切换，内容区居中。干净简洁，适合工具数量不多的场景。类似浏览器标签页风格。</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="c" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="background:#111827;border-radius:8px;padding:16px;font-family:monospace;font-size:12px;color:#e0e0e0;min-height:200px;">
+        <div style="margin-bottom:12px;">
+          <div style="color:#9ca3af;font-size:10px;margin-bottom:6px;">搜索工具...</div>
+          <div style="background:#1f2937;border-radius:6px;padding:6px 10px;color:#6b7280;font-size:11px;">🔍 输入关键词快速查找...</div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
+          <div style="background:#1f2937;border-radius:8px;padding:10px;text-align:center;border:1px solid #374151;">
+            <div style="font-size:18px;margin-bottom:4px;">🔗</div>
+            <div style="font-size:10px;color:#d1d5db;">URL 编码</div>
+          </div>
+          <div style="background:#1f2937;border-radius:8px;padding:10px;text-align:center;border:1px solid #6366f1;">
+            <div style="font-size:18px;margin-bottom:4px;">🔐</div>
+            <div style="font-size:10px;color:#d1d5db;">Base64</div>
+          </div>
+          <div style="background:#1f2937;border-radius:8px;padding:10px;text-align:center;border:1px solid #374151;">
+            <div style="font-size:18px;margin-bottom:4px;">#️⃣</div>
+            <div style="font-size:10px;color:#d1d5db;">哈希</div>
+          </div>
+          <div style="background:#1f2937;border-radius:8px;padding:10px;text-align:center;border:1px solid #374151;">
+            <div style="font-size:18px;margin-bottom:4px;">⏱</div>
+            <div style="font-size:10px;color:#d1d5db;">时间戳</div>
+          </div>
+          <div style="background:#1f2937;border-radius:8px;padding:10px;text-align:center;border:1px solid #374151;">
+            <div style="font-size:18px;margin-bottom:4px;">📱</div>
+            <div style="font-size:10px;color:#d1d5db;">二维码</div>
+          </div>
+          <div style="background:#1f2937;border-radius:8px;padding:10px;text-align:center;border:1px solid #374151;">
+            <div style="font-size:18px;margin-bottom:4px;">{}</div>
+            <div style="font-size:10px;color:#d1d5db;">JSON</div>
+          </div>
+        </div>
+        <div style="margin-top:8px;background:#1f2937;border-radius:6px;padding:10px;border:1px solid #6366f1;">
+          <div style="color:#a0a0c0;font-size:10px;margin-bottom:6px;">Base64 编码/解码</div>
+          <div style="background:#111827;border-radius:4px;height:35px;margin-bottom:6px;"></div>
+          <div style="background:#111827;border-radius:4px;height:35px;"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>C. 仪表盘 + 搜索</h3>
+      <p>首页展示所有工具卡片网格，带搜索过滤。点击卡片展开工具面板。工具多了以后扩展性最好。</p>
+    </div>
+  </div>
+</div>

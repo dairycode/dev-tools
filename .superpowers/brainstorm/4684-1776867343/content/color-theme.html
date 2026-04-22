@@ -1,0 +1,141 @@
+<h2>视觉风格选择</h2>
+<p class="subtitle">选择整体色调方向，都会支持深色/浅色主题切换</p>
+
+<div class="cards">
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="display:flex;gap:2px;border-radius:8px;overflow:hidden;min-height:160px;">
+        <!-- 深色 -->
+        <div style="flex:1;background:#0f172a;padding:16px;font-family:monospace;font-size:11px;">
+          <div style="display:flex;height:130px;">
+            <div style="width:44px;background:#1e293b;border-radius:6px;padding:6px 4px;display:flex;flex-direction:column;align-items:center;gap:8px;">
+              <div style="width:28px;height:28px;background:#6366f1;border-radius:6px;"></div>
+              <div style="width:28px;height:28px;background:#1e293b;border:1px solid #334155;border-radius:6px;"></div>
+              <div style="width:28px;height:28px;background:#1e293b;border:1px solid #334155;border-radius:6px;"></div>
+            </div>
+            <div style="flex:1;margin-left:8px;background:#1e293b;border-radius:6px;padding:10px;">
+              <div style="color:#94a3b8;font-size:10px;margin-bottom:6px;">工具名称</div>
+              <div style="background:#0f172a;border-radius:4px;height:30px;margin-bottom:6px;border:1px solid #334155;"></div>
+              <div style="display:flex;gap:4px;">
+                <div style="background:#6366f1;border-radius:4px;padding:3px 10px;color:white;font-size:9px;">操作</div>
+                <div style="background:#1e293b;border:1px solid #6366f1;border-radius:4px;padding:3px 10px;color:#6366f1;font-size:9px;">操作</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- 浅色 -->
+        <div style="flex:1;background:#f8fafc;padding:16px;font-family:monospace;font-size:11px;">
+          <div style="display:flex;height:130px;">
+            <div style="width:44px;background:#ffffff;border-radius:6px;padding:6px 4px;display:flex;flex-direction:column;align-items:center;gap:8px;border:1px solid #e2e8f0;">
+              <div style="width:28px;height:28px;background:#6366f1;border-radius:6px;"></div>
+              <div style="width:28px;height:28px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0;"></div>
+              <div style="width:28px;height:28px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0;"></div>
+            </div>
+            <div style="flex:1;margin-left:8px;background:#ffffff;border-radius:6px;padding:10px;border:1px solid #e2e8f0;">
+              <div style="color:#64748b;font-size:10px;margin-bottom:6px;">工具名称</div>
+              <div style="background:#f8fafc;border-radius:4px;height:30px;margin-bottom:6px;border:1px solid #e2e8f0;"></div>
+              <div style="display:flex;gap:4px;">
+                <div style="background:#6366f1;border-radius:4px;padding:3px 10px;color:white;font-size:9px;">操作</div>
+                <div style="background:#eef2ff;border-radius:4px;padding:3px 10px;color:#6366f1;font-size:9px;">操作</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A. Indigo 专业风</h3>
+      <p>靛蓝色主色调，Slate 灰底。冷静专业，开发者工具的经典配色。</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="display:flex;gap:2px;border-radius:8px;overflow:hidden;min-height:160px;">
+        <div style="flex:1;background:#09090b;padding:16px;font-family:monospace;font-size:11px;">
+          <div style="display:flex;height:130px;">
+            <div style="width:44px;background:#18181b;border-radius:6px;padding:6px 4px;display:flex;flex-direction:column;align-items:center;gap:8px;">
+              <div style="width:28px;height:28px;background:#22c55e;border-radius:6px;"></div>
+              <div style="width:28px;height:28px;background:#18181b;border:1px solid #27272a;border-radius:6px;"></div>
+              <div style="width:28px;height:28px;background:#18181b;border:1px solid #27272a;border-radius:6px;"></div>
+            </div>
+            <div style="flex:1;margin-left:8px;background:#18181b;border-radius:6px;padding:10px;">
+              <div style="color:#a1a1aa;font-size:10px;margin-bottom:6px;">工具名称</div>
+              <div style="background:#09090b;border-radius:4px;height:30px;margin-bottom:6px;border:1px solid #27272a;"></div>
+              <div style="display:flex;gap:4px;">
+                <div style="background:#22c55e;border-radius:4px;padding:3px 10px;color:#09090b;font-size:9px;">操作</div>
+                <div style="background:#18181b;border:1px solid #22c55e;border-radius:4px;padding:3px 10px;color:#22c55e;font-size:9px;">操作</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div style="flex:1;background:#fafafa;padding:16px;font-family:monospace;font-size:11px;">
+          <div style="display:flex;height:130px;">
+            <div style="width:44px;background:#ffffff;border-radius:6px;padding:6px 4px;display:flex;flex-direction:column;align-items:center;gap:8px;border:1px solid #e4e4e7;">
+              <div style="width:28px;height:28px;background:#16a34a;border-radius:6px;"></div>
+              <div style="width:28px;height:28px;background:#f4f4f5;border-radius:6px;border:1px solid #e4e4e7;"></div>
+              <div style="width:28px;height:28px;background:#f4f4f5;border-radius:6px;border:1px solid #e4e4e7;"></div>
+            </div>
+            <div style="flex:1;margin-left:8px;background:#ffffff;border-radius:6px;padding:10px;border:1px solid #e4e4e7;">
+              <div style="color:#71717a;font-size:10px;margin-bottom:6px;">工具名称</div>
+              <div style="background:#fafafa;border-radius:4px;height:30px;margin-bottom:6px;border:1px solid #e4e4e7;"></div>
+              <div style="display:flex;gap:4px;">
+                <div style="background:#16a34a;border-radius:4px;padding:3px 10px;color:white;font-size:9px;">操作</div>
+                <div style="background:#f0fdf4;border-radius:4px;padding:3px 10px;color:#16a34a;font-size:9px;">操作</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B. 绿色终端风</h3>
+      <p>绿色主色调，Zinc 灰底。终端/黑客风格，深色模式下特别有感觉。</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="c" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="display:flex;gap:2px;border-radius:8px;overflow:hidden;min-height:160px;">
+        <div style="flex:1;background:#0c0a09;padding:16px;font-family:monospace;font-size:11px;">
+          <div style="display:flex;height:130px;">
+            <div style="width:44px;background:#1c1917;border-radius:6px;padding:6px 4px;display:flex;flex-direction:column;align-items:center;gap:8px;">
+              <div style="width:28px;height:28px;background:#f97316;border-radius:6px;"></div>
+              <div style="width:28px;height:28px;background:#1c1917;border:1px solid #292524;border-radius:6px;"></div>
+              <div style="width:28px;height:28px;background:#1c1917;border:1px solid #292524;border-radius:6px;"></div>
+            </div>
+            <div style="flex:1;margin-left:8px;background:#1c1917;border-radius:6px;padding:10px;">
+              <div style="color:#a8a29e;font-size:10px;margin-bottom:6px;">工具名称</div>
+              <div style="background:#0c0a09;border-radius:4px;height:30px;margin-bottom:6px;border:1px solid #292524;"></div>
+              <div style="display:flex;gap:4px;">
+                <div style="background:#f97316;border-radius:4px;padding:3px 10px;color:white;font-size:9px;">操作</div>
+                <div style="background:#1c1917;border:1px solid #f97316;border-radius:4px;padding:3px 10px;color:#f97316;font-size:9px;">操作</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div style="flex:1;background:#fafaf9;padding:16px;font-family:monospace;font-size:11px;">
+          <div style="display:flex;height:130px;">
+            <div style="width:44px;background:#ffffff;border-radius:6px;padding:6px 4px;display:flex;flex-direction:column;align-items:center;gap:8px;border:1px solid #e7e5e4;">
+              <div style="width:28px;height:28px;background:#f97316;border-radius:6px;"></div>
+              <div style="width:28px;height:28px;background:#f5f5f4;border-radius:6px;border:1px solid #e7e5e4;"></div>
+              <div style="width:28px;height:28px;background:#f5f5f4;border-radius:6px;border:1px solid #e7e5e4;"></div>
+            </div>
+            <div style="flex:1;margin-left:8px;background:#ffffff;border-radius:6px;padding:10px;border:1px solid #e7e5e4;">
+              <div style="color:#78716c;font-size:10px;margin-bottom:6px;">工具名称</div>
+              <div style="background:#fafaf9;border-radius:4px;height:30px;margin-bottom:6px;border:1px solid #e7e5e4;"></div>
+              <div style="display:flex;gap:4px;">
+                <div style="background:#f97316;border-radius:4px;padding:3px 10px;color:white;font-size:9px;">操作</div>
+                <div style="background:#fff7ed;border-radius:4px;padding:3px 10px;color:#ea580c;font-size:9px;">操作</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>C. 橙色暖调</h3>
+      <p>橙色主色调，Stone 灰底。温暖有活力，视觉辨识度高。</p>
+    </div>
+  </div>
+</div>
