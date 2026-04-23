@@ -1,35 +1,29 @@
 {
   "name": "dev-tools",
+  "private": true,
   "version": "1.0.0",
-  "description": "开发工具包 - URL编码/解码、时间戳转换、二维码生成、JSON格式化",
-  "main": "index.js",
+  "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vue-tsc --noEmit && vite build",
-    "preview": "vite preview",
-    "type-check": "vue-tsc --noEmit"
+    "build": "tsc -b && vite build",
+    "preview": "vite preview"
   },
   "dependencies": {
     "crypto-js": "^4.2.0",
     "qrcode": "^1.5.3",
-    "vue": "^3.3.4"
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.28.0"
   },
   "devDependencies": {
     "@types/crypto-js": "^4.2.2",
-    "@types/node": "^25.0.3",
     "@types/qrcode": "^1.5.6",
-    "@vitejs/plugin-vue": "^4.2.3",
-    "typescript": "^5.9.3",
-    "vite": "^4.4.5",
-    "vue-tsc": "^3.2.1"
-  },
-  "keywords": [
-    "vue",
-    "dev-tools",
-    "url-encoder",
-    "timestamp",
-    "qrcode"
-  ],
-  "author": "Developer",
-  "license": "MIT"
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.3.4",
+    "tailwindcss": "^4.0.0",
+    "@tailwindcss/vite": "^4.0.0",
+    "typescript": "~5.6.2",
+    "vite": "^6.0.0"
+  }
 }
