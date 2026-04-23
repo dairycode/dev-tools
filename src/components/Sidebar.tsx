@@ -1,17 +1,21 @@
-import { NavLink } from 'react-router-dom'
 import type { NavItem } from '../types'
 import ThemeToggle from './ThemeToggle'
 
 const navItems: NavItem[] = [
-  { path: '/url-encoder', title: 'URL编码/解码', icon: '🔗' },
-  { path: '/base64', title: 'Base64编码/解码', icon: '🔐' },
-  { path: '/hash', title: 'Hash编码', icon: '🔒' },
-  { path: '/timestamp', title: '时间戳转换', icon: '⏰' },
-  { path: '/qrcode', title: '二维码生成', icon: '📱' },
-  { path: '/json', title: 'JSON格式化', icon: '📄' },
+  { key: 'url', title: 'URL编码/解码', icon: '🔗' },
+  { key: 'base64', title: 'Base64编码/解码', icon: '🔐' },
+  { key: 'hash', title: 'Hash编码', icon: '🔒' },
+  { key: 'timestamp', title: '时间戳转换', icon: '⏰' },
+  { key: 'qrcode', title: '二维码生成', icon: '📱' },
+  { key: 'json', title: 'JSON格式化', icon: '📄' },
 ]
 
-export default function Sidebar() {
+interface SidebarProps {
+  activeTab: string
+  onTabChange: (key: string) => void
+}
+
+export default function Sidebar({ activeTab, onTabChange }: SidebarProps) {
   return (
     <div className="w-[280px] bg-gray-50 dark:bg-neutral-800 border-r border-gray-200 dark:border-neutral-700 flex flex-col max-md:w-full max-md:border-r-0 max-md:border-b">
       <div className="px-5 py-6 border-b border-gray-200 dark:border-neutral-700">
@@ -21,20 +25,18 @@ export default function Sidebar() {
 
       <nav className="flex-1 py-4 overflow-y-auto max-md:flex max-md:overflow-x-auto max-md:px-4 max-md:py-3">
         {navItems.map(item => (
-          <NavLink
-            key={item.path}
-            to={item.path}
-            className={({ isActive }) =>
-              `w-full px-5 py-3 flex items-center gap-3 text-sm font-medium transition-all duration-200 max-md:shrink-0 max-md:px-4 max-md:py-2 max-md:rounded-lg max-md:whitespace-nowrap ${
-                isActive
-                  ? 'bg-blue-50 dark:bg-blue-900/30 text-primary border-r-[3px] border-primary max-md:border-r-0'
-                  : 'text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-neutral-700 hover:text-gray-600 dark:hover:text-gray-300'
-              }`
-            }
+          <button
+            key={item.key}
+            onClick={() => onTabChange(item.key)}
+            className={`w-full px-5 py-3 flex items-center gap-3 text-sm font-medium transition-all duration-200 border-none bg-transparent cursor-pointer text-left max-md:shrink-0 max-md:px-4 max-md:py-2 max-md:rounded-lg max-md:whitespace-nowrap ${
+              activeTab === item.key
+                ? 'bg-blue-50 dark:bg-blue-900/30 text-primary border-r-[3px] border-r-primary max-md:border-r-0'
+                : 'text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-neutral-700 hover:text-gray-600 dark:hover:text-gray-300'
+            }`}
           >
             <span className="text-lg w-6 text-center">{item.icon}</span>
             <span className="flex-1">{item.title}</span>
-          </NavLink>
+          </button>
         ))}
       </nav>
 
