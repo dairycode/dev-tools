@@ -1,273 +1,86 @@
-:root {
-  /* 亮色主题 */
-  --bg-primary: #ffffff;
-  --bg-secondary: #f8f9fa;
-  --bg-tertiary: #e9ecef;
-  --bg-hover: #f8f9fa;
-  --bg-active: #e3f2fd;
+@import "tailwindcss";
 
-  --text-primary: #1a1a1a;
-  --text-secondary: #495057;
-  --text-tertiary: #6c757d;
+@custom-variant dark (&:where(.dark, .dark *));
 
-  --border-color: #dee2e6;
-  --border-light: #e9ecef;
+@theme {
+  --color-bg-primary: #ffffff;
+  --color-bg-secondary: #f8f9fa;
+  --color-bg-tertiary: #e9ecef;
+  --color-bg-hover: #f8f9fa;
+  --color-bg-active: #e3f2fd;
 
-  --primary-color: #1976d2;
-  --primary-hover: #1565c0;
-  --primary-light: rgba(25, 118, 210, 0.1);
+  --color-text-primary: #1a1a1a;
+  --color-text-secondary: #495057;
+  --color-text-tertiary: #6c757d;
 
-  --success-bg: #d4edda;
-  --success-text: #155724;
-  --success-border: #c3e6cb;
-  --success-color: #28a745;
-  --success-hover: #1e7e34;
+  --color-border-default: #dee2e6;
+  --color-border-light: #e9ecef;
 
-  --error-bg: #f8d7da;
-  --error-text: #721c24;
-  --error-border: #f5c6cb;
+  --color-brand: #1976d2;
+  --color-brand-hover: #1565c0;
+  --color-brand-light: rgba(25, 118, 210, 0.1);
 
-  --danger-color: #dc3545;
-  --danger-hover: #c82333;
+  --color-success-bg: #d4edda;
+  --color-success-text: #155724;
+  --color-success-border: #c3e6cb;
+  --color-success: #28a745;
+  --color-success-hover: #1e7e34;
 
-  --input-bg: #ffffff;
-  --shadow-color: rgba(0, 0, 0, 0.1);
+  --color-error-bg: #f8d7da;
+  --color-error-text: #721c24;
+  --color-error-border: #f5c6cb;
+
+  --color-danger: #dc3545;
+  --color-danger-hover: #c82333;
+
+  --color-input-bg: #ffffff;
+  --color-shadow: rgba(0, 0, 0, 0.1);
+
+  --animate-slide-in: slide-in 0.3s ease;
 }
 
-/* 黑夜模式 */
-:root.dark {
-  --bg-primary: #1a1a1a;
-  --bg-secondary: #2d2d2d;
-  --bg-tertiary: #3d3d3d;
-  --bg-hover: #353535;
-  --bg-active: #2d4a6e;
+.dark {
+  --color-bg-primary: #1a1a1a;
+  --color-bg-secondary: #2d2d2d;
+  --color-bg-tertiary: #3d3d3d;
+  --color-bg-hover: #353535;
+  --color-bg-active: #2d4a6e;
 
-  --text-primary: #e0e0e0;
-  --text-secondary: #b0b0b0;
-  --text-tertiary: #909090;
+  --color-text-primary: #e0e0e0;
+  --color-text-secondary: #b0b0b0;
+  --color-text-tertiary: #909090;
 
-  --border-color: #404040;
-  --border-light: #353535;
+  --color-border-default: #404040;
+  --color-border-light: #353535;
 
-  --primary-color: #5e9edb;
-  --primary-hover: #72aee0;
-  --primary-light: rgba(94, 158, 219, 0.2);
+  --color-brand: #5e9edb;
+  --color-brand-hover: #72aee0;
+  --color-brand-light: rgba(94, 158, 219, 0.2);
 
-  --success-bg: #1b4332;
-  --success-text: #69db7c;
-  --success-border: #2d6a4f;
-  --success-color: #5cb85c;
-  --success-hover: #6ec56e;
+  --color-success-bg: #1b4332;
+  --color-success-text: #69db7c;
+  --color-success-border: #2d6a4f;
+  --color-success: #5cb85c;
+  --color-success-hover: #6ec56e;
 
-  --error-bg: #4a1c1c;
-  --error-text: #ff8787;
-  --error-border: #6b2929;
+  --color-error-bg: #4a1c1c;
+  --color-error-text: #ff8787;
+  --color-error-border: #6b2929;
 
-  --danger-color: #d68787;
-  --danger-hover: #e09999;
+  --color-danger: #d68787;
+  --color-danger-hover: #e09999;
 
-  --input-bg: #2d2d2d;
-  --shadow-color: rgba(0, 0, 0, 0.3);
+  --color-input-bg: #2d2d2d;
+  --color-shadow: rgba(0, 0, 0, 0.3);
 }
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  color: var(--text-primary);
-  line-height: 1.6;
-  background: var(--bg-primary);
-  transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-/* 输入框样式 */
-.input-group {
-  margin-bottom: 24px;
-}
-
-.input-group label {
-  display: block;
-  margin-bottom: 8px;
-  font-weight: 600;
-  color: var(--text-secondary);
-  font-size: 14px;
-}
-
-.input-group input,
-.input-group textarea {
-  width: 100%;
-  padding: 16px 18px;
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  font-size: 15px;
-  transition: all 0.2s ease;
-  font-family: inherit;
-  background: var(--input-bg);
-  color: var(--text-primary);
-}
-
-.input-group input:focus,
-.input-group textarea:focus {
-  outline: none;
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px var(--primary-light);
-}
-
-.input-group textarea {
-  min-height: 96px;
-  resize: none;
-  overflow-y: hidden;
-  line-height: 1.6;
-  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-  transition: height 0.2s;
-}
-
-/* 按钮样式 */
-.button-group {
-  display: flex;
-  gap: 12px;
-  margin-bottom: 24px;
-  flex-wrap: wrap;
-}
-
-.btn {
-  padding: 12px 24px;
-  border: none;
-  border-radius: 8px;
-  font-size: 15px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  flex: 1;
-  min-width: 110px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-}
-
-.btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.btn-primary {
-  background: var(--primary-color);
-  color: white;
-}
-
-.btn-primary:hover:not(:disabled) {
-  background: var(--primary-hover);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px var(--shadow-color);
-}
-
-.btn-secondary {
-  background: var(--bg-primary);
-  color: var(--primary-color);
-  border: 1px solid var(--primary-color);
-}
-
-.btn-secondary:hover:not(:disabled) {
-  background: var(--bg-hover);
-  transform: translateY(-1px);
-}
-
-.btn-clear {
-  background: var(--danger-color);
-  color: white;
-}
-
-.btn-clear:hover:not(:disabled) {
-  background: var(--danger-hover);
-  transform: translateY(-1px);
-}
-
-/* 消息提示样式 */
-.message {
-  padding: 12px 16px;
-  border-radius: 8px;
-  margin-top: 16px;
-  border: 1px solid;
-  font-size: 14px;
-}
-
-.success-message {
-  background: var(--success-bg);
-  color: var(--success-text);
-  border-color: var(--success-border);
-}
-
-.error-message {
-  background: var(--error-bg);
-  color: var(--error-text);
-  border-color: var(--error-border);
-}
-
-/* 加载动画 */
-.loading {
-  display: inline-block;
-  width: 20px;
-  height: 20px;
-  border: 2px solid var(--border-color);
-  border-top: 2px solid var(--primary-color);
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-/* 二维码容器样式 */
-.qr-output {
-  text-align: center;
-  margin-top: 24px;
-}
-
-.qr-container {
-  display: inline-block;
-  padding: 24px;
-  background: var(--bg-secondary);
-  border-radius: 12px;
-  border: 2px dashed var(--border-color);
-  min-height: 200px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.qr-container canvas {
-  max-width: 200px;
-  height: auto;
-}
-
-/* 响应式设计 */
-@media (max-width: 768px) {
-  .button-group {
-    flex-direction: column;
+@keyframes slide-in {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
   }
-  
-  .btn {
-    flex: none;
-  }
-  
-  .input-group input,
-  .input-group textarea {
-    padding: 12px 14px;
-    font-size: 14px;
+  to {
+    transform: translateX(0);
+    opacity: 1;
   }
 }
-
-@media (max-width: 480px) {
-  .input-group input,
-  .input-group textarea {
-    padding: 10px 12px;
-    font-size: 13px;
-  }
-} 

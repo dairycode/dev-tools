@@ -1,44 +1,44 @@
 <template>
-  <div class="qr-generator">
-    <div class="input-section">
-      <div class="input-group">
-        <label for="qr-input">输入内容</label>
-        <textarea 
+  <div class="flex flex-col gap-8 justify-start items-center pt-[10vh] min-h-full relative max-md:gap-6 max-md:pt-[5vh]">
+    <div class="flex flex-col gap-6 w-full max-w-[800px]">
+      <div class="mb-0">
+        <label for="qr-input" class="block mb-2 font-semibold text-(--color-text-secondary) text-sm">输入内容</label>
+        <textarea
           id="qr-input"
           v-model="inputText"
           placeholder="请输入要生成二维码的文本、URL等..."
           @keydown.ctrl.enter="generateQR"
           @keydown.meta.enter="generateQR"
-          class="qr-textarea"
+          class="w-full px-[18px] py-4 border border-(--color-border-default) rounded-lg text-[15px] transition-all duration-200 font-mono bg-(--color-input-bg) text-(--color-text-primary) min-h-24 text-[13px] leading-relaxed resize-none overflow-y-hidden focus:outline-none focus:border-(--color-brand) focus:shadow-[0_0_0_3px_var(--color-brand-light)] max-md:min-h-[72px]"
           ref="inputArea"
           @input="autoResize()"
         ></textarea>
       </div>
-      
-      <div class="button-group">
-        <button @click="generateQR" class="btn btn-primary">
+
+      <div class="flex gap-3 flex-wrap max-md:flex-col">
+        <button @click="generateQR" class="px-6 py-3 border-none rounded-lg text-[15px] font-medium cursor-pointer transition-all duration-200 flex-1 min-w-[110px] inline-flex items-center justify-center gap-2 bg-(--color-brand) text-white hover:bg-(--color-brand-hover) hover:-translate-y-px hover:shadow-[0_4px_12px_var(--color-shadow)] disabled:opacity-60 disabled:cursor-not-allowed max-md:flex-none">
           <span>生成二维码</span>
         </button>
-        <button @click="downloadQR" class="btn btn-secondary" :disabled="!qrCodeGenerated">
+        <button @click="downloadQR" class="px-6 py-3 border border-(--color-brand) rounded-lg text-[15px] font-medium cursor-pointer transition-all duration-200 flex-1 min-w-[110px] inline-flex items-center justify-center gap-2 bg-(--color-bg-primary) text-(--color-brand) hover:bg-(--color-bg-hover) hover:-translate-y-px disabled:opacity-60 disabled:cursor-not-allowed max-md:flex-none" :disabled="!qrCodeGenerated">
           <span>下载二维码</span>
         </button>
-        <button @click="clearAll" class="btn btn-clear">
+        <button @click="clearAll" class="px-6 py-3 border-none rounded-lg text-[15px] font-medium cursor-pointer transition-all duration-200 flex-1 min-w-[110px] inline-flex items-center justify-center gap-2 bg-(--color-danger) text-white hover:bg-(--color-danger-hover) hover:-translate-y-px disabled:opacity-60 disabled:cursor-not-allowed max-md:flex-none">
           <span>清空</span>
         </button>
       </div>
     </div>
-    
-    <div class="output-section">
-      <div class="qr-output">
-        <div class="qr-container">
-          <div v-if="isLoading" class="loading"></div>
-          <canvas ref="qrCanvas" v-show="qrCodeGenerated" style="display: block; margin: 0 auto;"></canvas>
-          <p v-if="!qrCodeGenerated && !isLoading" class="qr-placeholder">二维码将在这里显示</p>
+
+    <div class="flex flex-col gap-6 w-full max-w-[800px]">
+      <div class="text-center mt-6">
+        <div class="inline-flex p-6 bg-(--color-bg-secondary) rounded-xl border-2 border-dashed border-(--color-border-default) min-h-[200px] items-center justify-center max-md:min-h-[150px]">
+          <div v-if="isLoading" class="inline-block w-5 h-5 border-2 border-(--color-border-default) border-t-2 border-t-(--color-brand) rounded-full animate-spin"></div>
+          <canvas ref="qrCanvas" v-show="qrCodeGenerated" class="block mx-auto max-w-[200px] h-auto"></canvas>
+          <p v-if="!qrCodeGenerated && !isLoading" class="text-(--color-text-tertiary) m-0">二维码将在这里显示</p>
         </div>
       </div>
     </div>
-    
-    <div v-if="message" :class="['message', messageType]">
+
+    <div v-if="message" :class="['fixed top-5 right-5 z-[1000] max-w-[300px] p-3 px-4 rounded-lg text-sm border animate-slide-in max-md:right-2.5 max-md:left-2.5 max-md:max-w-none', messageType === 'success' ? 'bg-(--color-success-bg) text-(--color-success-text) border-(--color-success-border)' : 'bg-(--color-error-bg) text-(--color-error-text) border-(--color-error-border)']">
       {{ message }}
     </div>
   </div>
@@ -141,91 +141,3 @@ onMounted(() => {
   autoResize()
 })
 </script>
-
-<style scoped>
-.qr-generator {
-  display: flex;
-  flex-direction: column;
-  gap: 32px;
-  justify-content: flex-start;
-  align-items: center;
-  padding-top: 10vh;
-  min-height: 100%;
-  position: relative;
-}
-
-.input-section,
-.output-section {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-  width: 100%;
-  max-width: 800px;
-}
-
-.qr-textarea {
-  min-height: 96px !important;
-  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-  font-size: 13px;
-  line-height: 1.5;
-  resize: none;
-  overflow-y: hidden;
-  transition: height 0.2s;
-}
-
-.qr-output {
-  text-align: center;
-  margin-top: 24px;
-}
-
-.qr-container {
-  display: inline-block;
-  padding: 24px;
-  background: var(--bg-secondary);
-  border-radius: 12px;
-  border: 2px dashed var(--border-color);
-  min-height: 200px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.qr-container canvas {
-  max-width: 200px;
-  height: auto;
-}
-
-.qr-placeholder {
-  color: var(--text-tertiary);
-  margin: 0;
-}
-
-.message {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  z-index: 1000;
-  max-width: 300px;
-}
-
-@media (max-width: 768px) {
-  .qr-generator {
-    gap: 24px;
-    padding-top: 5vh;
-  }
-  
-  .qr-textarea {
-    min-height: 72px !important;
-  }
-  
-  .qr-container {
-    min-height: 150px;
-  }
-  
-  .message {
-    right: 10px;
-    left: 10px;
-    max-width: none;
-  }
-}
-</style>

@@ -1,35 +1,35 @@
 <template>
-  <div class="json-formatter">
-    <div class="input-section">
-      <div class="input-group">
-        <label for="json-input">输入JSON</label>
-        <textarea 
+  <div class="flex flex-col gap-8 justify-start items-center pt-[10vh] min-h-full relative max-md:gap-6 max-md:pt-[5vh]">
+    <div class="flex flex-col gap-6 w-full max-w-[800px]">
+      <div class="mb-0">
+        <label for="json-input" class="block mb-2 font-semibold text-(--color-text-secondary) text-sm">输入JSON</label>
+        <textarea
           id="json-input"
           v-model="inputText"
           placeholder="请输入要格式化的JSON数据..."
           @keydown.ctrl.enter="formatJson"
           @keydown.meta.enter="formatJson"
-          class="json-textarea"
+          class="w-full px-[18px] py-4 border border-(--color-border-default) rounded-lg text-[15px] transition-all duration-200 font-mono bg-(--color-input-bg) text-(--color-text-primary) min-h-[120px] text-[13px] leading-relaxed resize-none overflow-y-hidden focus:outline-none focus:border-(--color-brand) focus:shadow-[0_0_0_3px_var(--color-brand-light)] max-md:min-h-[100px]"
           ref="inputArea"
           @input="autoResize()"
         ></textarea>
       </div>
-      
-      <div class="button-group">
-        <button @click="formatJson" class="btn btn-primary">
+
+      <div class="flex gap-3 flex-wrap max-md:flex-col">
+        <button @click="formatJson" class="px-6 py-3 border-none rounded-lg text-[15px] font-medium cursor-pointer transition-all duration-200 flex-1 min-w-[110px] inline-flex items-center justify-center gap-2 bg-(--color-brand) text-white hover:bg-(--color-brand-hover) hover:-translate-y-px hover:shadow-[0_4px_12px_var(--color-shadow)] disabled:opacity-60 disabled:cursor-not-allowed max-md:flex-none">
           <span>格式化</span>
         </button>
-        <button @click="compressJson" class="btn btn-secondary">
+        <button @click="compressJson" class="px-6 py-3 border border-(--color-brand) rounded-lg text-[15px] font-medium cursor-pointer transition-all duration-200 flex-1 min-w-[110px] inline-flex items-center justify-center gap-2 bg-(--color-bg-primary) text-(--color-brand) hover:bg-(--color-bg-hover) hover:-translate-y-px disabled:opacity-60 disabled:cursor-not-allowed max-md:flex-none">
           <span>压缩</span>
         </button>
-        <button @click="clearAll" class="btn btn-clear">
+        <button @click="clearAll" class="px-6 py-3 border-none rounded-lg text-[15px] font-medium cursor-pointer transition-all duration-200 flex-1 min-w-[110px] inline-flex items-center justify-center gap-2 bg-(--color-danger) text-white hover:bg-(--color-danger-hover) hover:-translate-y-px disabled:opacity-60 disabled:cursor-not-allowed max-md:flex-none">
           <span>清空</span>
         </button>
       </div>
 
       <!-- JSON树视图 -->
-      <div v-if="parsedJson !== null" class="tree-view-container">
-        <div class="tree-view">
+      <div v-if="parsedJson !== null" class="w-full mt-6">
+        <div class="bg-(--color-bg-secondary) border border-(--color-border-default) rounded-lg p-4 font-mono text-[13px] leading-relaxed overflow-x-auto max-h-[600px] overflow-y-auto max-md:max-h-[400px]">
           <JsonTreeNode
             :data="parsedJson"
             :keyName="'root'"
@@ -41,7 +41,7 @@
       </div>
     </div>
 
-    <div v-if="message" :class="['message', messageType]">
+    <div v-if="message" :class="['fixed top-5 right-5 z-[1000] max-w-[300px] p-3 px-4 rounded-lg text-sm border animate-slide-in max-md:right-2.5 max-md:left-2.5 max-md:max-w-none', messageType === 'success' ? 'bg-(--color-success-bg) text-(--color-success-text) border-(--color-success-border)' : 'bg-(--color-error-bg) text-(--color-error-text) border-(--color-error-border)']">
       {{ message }}
     </div>
   </div>
@@ -197,81 +197,4 @@ onBeforeUnmount(() => {
   }
 })
 </script>
-
-<style scoped>
-.json-formatter {
-  display: flex;
-  flex-direction: column;
-  gap: 32px;
-  justify-content: flex-start;
-  align-items: center;
-  padding-top: 10vh;
-  min-height: 100%;
-  position: relative;
-}
-
-.input-section {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-  width: 100%;
-  max-width: 800px;
-}
-
-.json-textarea {
-  min-height: 120px !important;
-  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-  font-size: 13px;
-  line-height: 1.5;
-  resize: none;
-  overflow-y: hidden;
-  transition: height 0.2s;
-}
-
-.message {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  z-index: 1000;
-  max-width: 300px;
-}
-
-.tree-view-container {
-  width: 100%;
-  margin-top: 24px;
-}
-
-.tree-view {
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  padding: 16px;
-  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-  font-size: 13px;
-  line-height: 1.6;
-  overflow-x: auto;
-  max-height: 600px;
-  overflow-y: auto;
-}
-
-@media (max-width: 768px) {
-  .json-formatter {
-    gap: 24px;
-    padding-top: 5vh;
-  }
-
-  .json-textarea {
-    min-height: 100px !important;
-  }
-
-  .message {
-    right: 10px;
-    left: 10px;
-    max-width: none;
-  }
-
-  .tree-view {
-    max-height: 400px;
-  }
-}
-</style> 
+ 

@@ -1,27 +1,27 @@
 <template>
-  <div class="tree-node">
-    <div class="node-line" :style="{ paddingLeft: level * 20 + 'px' }">
+  <div class="select-none">
+    <div class="flex items-center gap-1.5 py-0.5 leading-relaxed" :style="{ paddingLeft: level * 20 + 'px' }">
       <!-- 展开/折叠按钮 -->
       <span
         v-if="isExpandable"
-        class="toggle-icon"
+        class="inline-block w-3.5 h-3.5 cursor-pointer text-(--color-text-tertiary) text-[10px] text-center leading-[14px] transition-transform duration-200 hover:text-(--color-brand)"
         @click="toggle"
       >
         {{ isExpanded ? '▼' : '▶' }}
       </span>
-      <span v-else class="toggle-icon-placeholder"></span>
+      <span v-else class="inline-block w-3.5 h-3.5"></span>
 
       <!-- 键名 -->
-      <span class="key-name">{{ displayKey }}</span>
-      <span class="colon">:</span>
+      <span class="text-(--color-brand) font-medium">{{ displayKey }}</span>
+      <span class="text-(--color-text-tertiary)">:</span>
 
       <!-- 值预览 -->
-      <span v-if="!isExpandable" :class="['value', valueType]">
+      <span v-if="!isExpandable" class="ml-1 text-(--color-brand)">
         {{ displayValue }}
       </span>
-      <span v-else class="bracket">
+      <span v-else class="text-(--color-text-tertiary)">
         {{ isArray ? '[' : '{' }}
-        <span v-if="!isExpanded" class="preview">
+        <span v-if="!isExpanded" class="text-(--color-text-tertiary) italic mx-1.5 text-xs opacity-70">
           {{ collapsedPreview }}
         </span>
         <span v-if="!isExpanded">{{ isArray ? ']' : '}' }}</span>
@@ -29,7 +29,7 @@
     </div>
 
     <!-- 展开的子节点 -->
-    <div v-if="isExpandable && isExpanded" class="children">
+    <div v-if="isExpandable && isExpanded">
       <JsonTreeNode
         v-for="(childValue, childKey) in data"
         :key="childKey"
@@ -40,9 +40,9 @@
         :parentPath="currentPath"
         @toggle="$emit('toggle', $event)"
       />
-      <div class="closing-bracket" :style="{ paddingLeft: level * 20 + 'px' }">
-        <span class="toggle-icon-placeholder"></span>
-        <span class="bracket">{{ isArray ? ']' : '}' }}</span>
+      <div class="flex items-center gap-1.5 py-0.5" :style="{ paddingLeft: level * 20 + 'px' }">
+        <span class="inline-block w-3.5 h-3.5"></span>
+        <span class="text-(--color-text-tertiary)">{{ isArray ? ']' : '}' }}</span>
       </div>
     </div>
   </div>
@@ -126,91 +126,3 @@ const toggle = () => {
   emit('toggle', currentPath.value)
 }
 </script>
-
-<style scoped>
-.tree-node {
-  user-select: none;
-}
-
-.node-line {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 2px 0;
-  line-height: 1.6;
-}
-
-.toggle-icon {
-  display: inline-block;
-  width: 14px;
-  height: 14px;
-  cursor: pointer;
-  color: var(--text-tertiary);
-  font-size: 10px;
-  text-align: center;
-  line-height: 14px;
-  transition: transform 0.2s;
-}
-
-.toggle-icon:hover {
-  color: var(--primary-color);
-}
-
-.toggle-icon-placeholder {
-  display: inline-block;
-  width: 14px;
-  height: 14px;
-}
-
-.key-name {
-  color: var(--primary-color);
-  font-weight: 500;
-}
-
-.colon {
-  color: var(--text-tertiary);
-}
-
-.value {
-  margin-left: 4px;
-}
-
-.value.string {
-  color: var(--primary-color);
-}
-
-.value.number {
-  color: var(--primary-color);
-}
-
-.value.boolean {
-  color: var(--primary-color);
-}
-
-.value.null {
-  color: var(--primary-color);
-}
-
-.bracket {
-  color: var(--text-tertiary);
-}
-
-.preview {
-  color: var(--text-tertiary);
-  font-style: italic;
-  margin: 0 6px;
-  font-size: 12px;
-  opacity: 0.7;
-}
-
-.children {
-  margin-left: 0;
-}
-
-.closing-bracket {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 2px 0;
-}
-</style>

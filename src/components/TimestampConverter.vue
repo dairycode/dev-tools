@@ -1,58 +1,46 @@
 <template>
-  <div class="timestamp-converter">
+  <div class="flex flex-col gap-10 justify-start items-center pt-[5vh] min-h-full relative max-md:gap-6 max-md:pt-[3vh]">
     <!-- 时间戳转换为日期 -->
-    <div class="converter-section">
-      <h3 class="section-title">时间戳转换为日期</h3>
-      <div class="input-section">
-        <div class="input-group">
-          <label for="timestamp-input">时间戳</label>
-          <input 
-            type="text" 
+    <div class="w-full max-w-[800px] bg-(--color-bg-primary) rounded-xl p-6 shadow-[0_2px_8px_var(--color-shadow)] max-md:p-5">
+      <h3 class="text-lg font-semibold text-(--color-text-primary) mb-5 pb-3 border-b-2 border-b-(--color-brand)">时间戳转换为日期</h3>
+      <div class="flex flex-col gap-5">
+        <div class="mb-0">
+          <label for="timestamp-input" class="block mb-2 font-semibold text-(--color-text-secondary) text-sm">时间戳</label>
+          <input
+            type="text"
             id="timestamp-input"
             v-model="timestampInput"
             placeholder="请输入Unix时间戳（秒或毫秒）..."
             @keydown.ctrl.enter="convertTimestampToDate"
             @keydown.meta.enter="convertTimestampToDate"
-            class="timestamp-input"
+            class="w-full py-4 px-[18px]! border border-(--color-border-default) rounded-lg text-[15px] transition-all duration-200 bg-(--color-input-bg) text-(--color-text-primary) font-mono focus:outline-none focus:border-(--color-brand) focus:shadow-[0_0_0_3px_var(--color-brand-light)]"
           >
         </div>
-        
-        <div class="button-group">
-          <button @click="convertTimestampToDate" class="btn btn-primary">
+
+        <div class="flex gap-3 flex-wrap max-md:flex-col">
+          <button @click="convertTimestampToDate" class="px-6 py-3 border-none rounded-lg text-[15px] font-medium cursor-pointer transition-all duration-200 flex-1 min-w-[110px] inline-flex items-center justify-center gap-2 bg-(--color-brand) text-white hover:bg-(--color-brand-hover) hover:-translate-y-px hover:shadow-[0_4px_12px_var(--color-shadow)] disabled:opacity-60 disabled:cursor-not-allowed max-md:flex-none">
             <span>转换</span>
           </button>
-          <button @click="getCurrentTimestamp" class="btn btn-secondary">
+          <button @click="getCurrentTimestamp" class="px-6 py-3 border border-(--color-brand) rounded-lg text-[15px] font-medium cursor-pointer transition-all duration-200 flex-1 min-w-[110px] inline-flex items-center justify-center gap-2 bg-(--color-bg-primary) text-(--color-brand) hover:bg-(--color-bg-hover) hover:-translate-y-px disabled:opacity-60 disabled:cursor-not-allowed max-md:flex-none">
             <span>当前时间戳</span>
           </button>
-          <button @click="clearTimestamp" class="btn btn-clear">
+          <button @click="clearTimestamp" class="px-6 py-3 border-none rounded-lg text-[15px] font-medium cursor-pointer transition-all duration-200 flex-1 min-w-[110px] inline-flex items-center justify-center gap-2 bg-(--color-danger) text-white hover:bg-(--color-danger-hover) hover:-translate-y-px disabled:opacity-60 disabled:cursor-not-allowed max-md:flex-none">
             <span>清空</span>
           </button>
         </div>
-        
-        <div class="result-section">
-          <div class="input-group">
-            <label>转换结果</label>
-            <div class="result-display">
-              <div class="result-item">
-                <span class="result-label">北京时间：</span>
-                <span class="result-value">{{ timestampResult.localTime || '-' }}</span>
-              </div>
-              <div class="result-item">
-                <span class="result-label">UTC时间：</span>
-                <span class="result-value">{{ timestampResult.utcTime || '-' }}</span>
-              </div>
-              <div class="result-item">
-                <span class="result-label">ISO格式：</span>
-                <span class="result-value">{{ timestampResult.isoTime || '-' }}</span>
-              </div>
-              <div class="result-item">
-                <span class="result-label">秒级时间戳：</span>
-                <span class="result-value">{{ timestampResult.seconds || '-' }}</span>
-              </div>
-              <div class="result-item">
-                <span class="result-label">毫秒时间戳：</span>
-                <span class="result-value">{{ timestampResult.milliseconds || '-' }}</span>
-              </div>
+
+        <div class="mt-2">
+          <label class="block mb-2 font-semibold text-(--color-text-secondary) text-sm">转换结果</label>
+          <div class="bg-(--color-bg-secondary) rounded-lg p-4 border border-(--color-border-light)">
+            <div v-for="(item, idx) in [
+              { label: '北京时间：', value: timestampResult.localTime },
+              { label: 'UTC时间：', value: timestampResult.utcTime },
+              { label: 'ISO格式：', value: timestampResult.isoTime },
+              { label: '秒级时间戳：', value: timestampResult.seconds },
+              { label: '毫秒时间戳：', value: timestampResult.milliseconds }
+            ]" :key="idx" class="flex justify-between items-center py-2 border-b border-(--color-border-light) last:border-b-0 max-md:flex-col max-md:items-start max-md:gap-1">
+              <span class="font-medium text-(--color-text-secondary) text-sm">{{ item.label }}</span>
+              <span class="font-mono text-[13px] text-(--color-brand) bg-(--color-bg-active) px-2 py-1 rounded break-all max-md:w-full max-md:text-left">{{ item.value || '-' }}</span>
             </div>
           </div>
         </div>
@@ -60,77 +48,65 @@
     </div>
 
     <!-- 日期转换为时间戳 -->
-    <div class="converter-section">
-      <h3 class="section-title">日期转换为时间戳</h3>
-      <div class="input-section">
-        <div class="date-input-group">
-          <div class="input-group">
-            <label for="date-input">日期</label>
-            <input 
-              type="date" 
+    <div class="w-full max-w-[800px] bg-(--color-bg-primary) rounded-xl p-6 shadow-[0_2px_8px_var(--color-shadow)] max-md:p-5">
+      <h3 class="text-lg font-semibold text-(--color-text-primary) mb-5 pb-3 border-b-2 border-b-(--color-brand)">日期转换为时间戳</h3>
+      <div class="flex flex-col gap-5">
+        <div class="grid grid-cols-2 gap-4 max-md:grid-cols-1 max-md:gap-3">
+          <div class="mb-0">
+            <label for="date-input" class="block mb-2 font-semibold text-(--color-text-secondary) text-sm">日期</label>
+            <input
+              type="date"
               id="date-input"
               v-model="dateInput"
-              class="date-input clickable-input"
+              class="w-full py-4 px-[18px]! border border-(--color-border-default) rounded-lg text-[15px] transition-all duration-200 bg-(--color-input-bg) text-(--color-text-primary) font-mono cursor-pointer focus:outline-none focus:border-(--color-brand) focus:shadow-[0_0_0_3px_var(--color-brand-light)]"
               ref="dateInputRef"
               @click="focusDateInput"
             >
           </div>
-          <div class="input-group">
-            <label for="time-input">时间</label>
-            <input 
-              type="time" 
+          <div class="mb-0">
+            <label for="time-input" class="block mb-2 font-semibold text-(--color-text-secondary) text-sm">时间</label>
+            <input
+              type="time"
               id="time-input"
               v-model="timeInput"
-              class="time-input clickable-input"
+              class="w-full py-4 px-[18px]! border border-(--color-border-default) rounded-lg text-[15px] transition-all duration-200 bg-(--color-input-bg) text-(--color-text-primary) font-mono cursor-pointer focus:outline-none focus:border-(--color-brand) focus:shadow-[0_0_0_3px_var(--color-brand-light)]"
               ref="timeInputRef"
               @click="focusTimeInput"
             >
           </div>
         </div>
-        
-        <div class="button-group">
-          <button @click="convertDateToTimestamp" class="btn btn-primary">
+
+        <div class="flex gap-3 flex-wrap max-md:flex-col">
+          <button @click="convertDateToTimestamp" class="px-6 py-3 border-none rounded-lg text-[15px] font-medium cursor-pointer transition-all duration-200 flex-1 min-w-[110px] inline-flex items-center justify-center gap-2 bg-(--color-brand) text-white hover:bg-(--color-brand-hover) hover:-translate-y-px hover:shadow-[0_4px_12px_var(--color-shadow)] disabled:opacity-60 disabled:cursor-not-allowed max-md:flex-none">
             <span>转换</span>
           </button>
-          <button @click="setCurrentDateTime" class="btn btn-secondary">
+          <button @click="setCurrentDateTime" class="px-6 py-3 border border-(--color-brand) rounded-lg text-[15px] font-medium cursor-pointer transition-all duration-200 flex-1 min-w-[110px] inline-flex items-center justify-center gap-2 bg-(--color-bg-primary) text-(--color-brand) hover:bg-(--color-bg-hover) hover:-translate-y-px disabled:opacity-60 disabled:cursor-not-allowed max-md:flex-none">
             <span>当前时间</span>
           </button>
-          <button @click="clearDateTime" class="btn btn-clear">
+          <button @click="clearDateTime" class="px-6 py-3 border-none rounded-lg text-[15px] font-medium cursor-pointer transition-all duration-200 flex-1 min-w-[110px] inline-flex items-center justify-center gap-2 bg-(--color-danger) text-white hover:bg-(--color-danger-hover) hover:-translate-y-px disabled:opacity-60 disabled:cursor-not-allowed max-md:flex-none">
             <span>清空</span>
           </button>
         </div>
-        
-        <div class="result-section">
-          <div class="input-group">
-            <label>转换结果</label>
-            <div class="result-display">
-              <div class="result-item">
-                <span class="result-label">选择的日期时间：</span>
-                <span class="result-value">{{ dateResult.selectedDateTime || '-' }}</span>
-              </div>
-              <div class="result-item">
-                <span class="result-label">秒级时间戳：</span>
-                <span class="result-value">{{ dateResult.seconds || '-' }}</span>
-              </div>
-              <div class="result-item">
-                <span class="result-label">毫秒时间戳：</span>
-                <span class="result-value">{{ dateResult.milliseconds || '-' }}</span>
-              </div>
-              <div class="result-item">
-                <span class="result-label">北京时间：</span>
-                <span class="result-value">{{ dateResult.localTime || '-' }}</span>
-              </div>
-              <div class="result-item">
-                <span class="result-label">UTC时间：</span>
-                <span class="result-value">{{ dateResult.utcTime || '-' }}</span>
-              </div>
+
+        <div class="mt-2">
+          <label class="block mb-2 font-semibold text-(--color-text-secondary) text-sm">转换结果</label>
+          <div class="bg-(--color-bg-secondary) rounded-lg p-4 border border-(--color-border-light)">
+            <div v-for="(item, idx) in [
+              { label: '选择的日期时间：', value: dateResult.selectedDateTime },
+              { label: '秒级时间戳：', value: dateResult.seconds },
+              { label: '毫秒时间戳：', value: dateResult.milliseconds },
+              { label: '北京时间：', value: dateResult.localTime },
+              { label: 'UTC时间：', value: dateResult.utcTime }
+            ]" :key="idx" class="flex justify-between items-center py-2 border-b border-(--color-border-light) last:border-b-0 max-md:flex-col max-md:items-start max-md:gap-1">
+              <span class="font-medium text-(--color-text-secondary) text-sm">{{ item.label }}</span>
+              <span class="font-mono text-[13px] text-(--color-brand) bg-(--color-bg-active) px-2 py-1 rounded break-all max-md:w-full max-md:text-left">{{ item.value || '-' }}</span>
             </div>
           </div>
         </div>
       </div>
     </div>
-    
-    <div v-if="message" :class="['message', messageType]">
+
+    <div v-if="message" :class="['fixed top-5 right-5 z-[1000] max-w-[300px] p-3 px-4 rounded-lg text-sm border animate-slide-in max-md:right-2.5 max-md:left-2.5 max-md:max-w-none', messageType === 'success' ? 'bg-(--color-success-bg) text-(--color-success-text) border-(--color-success-border)' : 'bg-(--color-error-bg) text-(--color-error-text) border-(--color-error-border)']">
       {{ message }}
     </div>
   </div>
@@ -277,138 +253,3 @@ onMounted(() => {
   setCurrentDateTime()
 })
 </script>
-
-<style scoped>
-.timestamp-converter {
-  display: flex;
-  flex-direction: column;
-  gap: 40px;
-  justify-content: flex-start;
-  align-items: center;
-  padding-top: 5vh;
-  min-height: 100%;
-  position: relative;
-}
-
-.converter-section {
-  width: 100%;
-  max-width: 800px;
-  background: var(--bg-primary);
-  border-radius: 12px;
-  padding: 24px;
-  box-shadow: 0 2px 8px var(--shadow-color);
-}
-
-.section-title {
-  font-size: 18px;
-  font-weight: 600;
-  color: var(--text-primary);
-  margin: 0 0 20px 0;
-  padding-bottom: 12px;
-  border-bottom: 2px solid var(--primary-color);
-}
-
-.input-section {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.date-input-group {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-}
-
-.clickable-input {
-  cursor: pointer;
-}
-
-.timestamp-input,
-.date-input,
-.time-input {
-  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-  font-size: 15px;
-  padding: 16px 18px !important;
-}
-
-.result-section {
-  margin-top: 8px;
-}
-
-.result-display {
-  background: var(--bg-secondary);
-  border-radius: 8px;
-  padding: 16px;
-  border: 1px solid var(--border-light);
-}
-
-.result-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 8px 0;
-  border-bottom: 1px solid var(--border-light);
-}
-
-.result-item:last-child {
-  border-bottom: none;
-}
-
-.result-label {
-  font-weight: 500;
-  color: var(--text-secondary);
-  font-size: 14px;
-}
-
-.result-value {
-  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-  font-size: 13px;
-  color: var(--primary-color);
-  background: var(--bg-active);
-  padding: 4px 8px;
-  border-radius: 4px;
-  word-break: break-all;
-}
-
-.message {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  z-index: 1000;
-  max-width: 300px;
-}
-
-@media (max-width: 768px) {
-  .timestamp-converter {
-    gap: 24px;
-    padding-top: 3vh;
-  }
-  
-  .converter-section {
-    padding: 20px;
-  }
-  
-  .date-input-group {
-    grid-template-columns: 1fr;
-    gap: 12px;
-  }
-  
-  .result-item {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 4px;
-  }
-  
-  .result-value {
-    width: 100%;
-    text-align: left;
-  }
-  
-  .message {
-    right: 10px;
-    left: 10px;
-    max-width: none;
-  }
-}
-</style> 
