@@ -6,6 +6,7 @@ import { ToolBoundary } from './ToolBoundary'
 import { ThemeProvider } from '../shared/ui/ThemeProvider'
 import { ThemeToggle } from '../shared/ui/ThemeToggle'
 import { Icon } from '../shared/ui/Icon'
+import { utilityActionClassName } from '../shared/ui/Controls'
 import { ToastProvider, useToast } from '../shared/ui/Toast'
 
 function ToolScreen({ tool }: { tool: ToolDefinition }) {
@@ -14,9 +15,11 @@ function ToolScreen({ tool }: { tool: ToolDefinition }) {
     document.title = `${tool.title} · 开发工具包`
   }, [tool.title])
   return (
-    <section aria-labelledby="tool-title" className="tool-screen">
-      <header className="tool-heading">
-        <h1 id="tool-title">{tool.title}</h1>
+    <section aria-labelledby="tool-title" className="mx-auto w-full max-w-260">
+      <header className="mb-6">
+        <h1 id="tool-title" className="text-2xl font-bold tracking-tight md:text-3xl">
+          {tool.title}
+        </h1>
       </header>
       <ToolBoundary key={tool.id}>
         <Tool />
@@ -33,10 +36,10 @@ function Layout() {
     window.scrollTo(0, 0)
   }, [pathname, dismiss])
   return (
-    <div className="app-shell">
+    <div className="min-h-dvh md:grid md:grid-cols-[264px_minmax(0,1fr)]">
       <a
         href="#main-content"
-        className="skip-link"
+        className="fixed -top-25 left-4 z-50 rounded-lg bg-surface px-4 py-3 text-brand shadow-lg focus:top-3"
         onClick={(event) => {
           event.preventDefault()
           document.getElementById('main-content')?.focus()
@@ -44,31 +47,34 @@ function Layout() {
       >
         跳转到工具内容
       </a>
-      <aside className="sidebar">
-        <div className="sidebar-brand">
-          <span className="brand-icon">
-            <Icon name="code" size={26} />
+      <aside className="flex flex-col border-b border-line bg-surface md:sticky md:top-0 md:h-dvh md:overflow-y-auto md:overscroll-none md:border-r md:border-b-0">
+        <div className="flex items-center gap-3 px-5 pt-4 pb-2 md:px-6 md:pt-7 md:pb-6">
+          <span className="flex size-8.5 shrink-0 items-center justify-center rounded-xl bg-action text-white md:size-10.5">
+            <Icon name="code" size={26} className="size-5.5 md:size-6.5" />
           </span>
-          <p className="brand-title">开发工具包</p>
+          <p className="text-lg font-bold tracking-wide">开发工具包</p>
         </div>
-        <nav aria-label="工具导航" className="tool-nav">
+        <nav
+          aria-label="工具导航"
+          className="grid grid-cols-3 gap-1.5 px-3 py-2 md:flex md:flex-col md:gap-2 md:px-4 md:py-3"
+        >
           {tools.map((tool) => (
             <Link
               key={tool.id}
               href={`/${tool.id}`}
               replace={pathname === `/${tool.id}`}
               aria-current={pathname === `/${tool.id}` ? 'page' : undefined}
-              className={`nav-item ${pathname === `/${tool.id}` ? 'is-active' : ''}`}
+              className={`flex min-h-11.5 items-center justify-center gap-[5px] rounded-xl p-2 text-[12px] font-medium no-underline transition-colors md:justify-start md:gap-2.5 md:px-3 md:py-3 md:text-[14px] ${pathname === `/${tool.id}` ? 'bg-active text-brand' : 'text-subtle hover:bg-panel hover:text-ink'}`}
             >
-              <Icon name={tool.icon} className="nav-icon" />
+              <Icon name={tool.icon} className="size-4.5 md:size-5" />
               <span>{tool.title}</span>
             </Link>
           ))}
         </nav>
-        <div className="sidebar-footer">
-          <div className="sidebar-actions">
+        <div className="px-4 pt-1 pb-3 md:mt-auto md:pt-3 md:pb-4">
+          <div className="flex gap-2">
             <a
-              className="utility-button"
+              className={utilityActionClassName}
               href="https://github.com/dairycode/dev-tools"
               target="_blank"
               rel="noopener noreferrer"
@@ -80,8 +86,8 @@ function Layout() {
           </div>
         </div>
       </aside>
-      <div className="main-column">
-        <main id="main-content" tabIndex={-1} className="main-content">
+      <div className="flex min-w-0 flex-col">
+        <main id="main-content" tabIndex={-1} className="flex-1 px-5 py-6 outline-none md:px-8">
           <Switch>
             <Route path="/">
               <Redirect to="/url" replace />
@@ -96,8 +102,13 @@ function Layout() {
             </Route>
           </Switch>
         </main>
-        <footer className="site-footer">
-          <a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener noreferrer">
+        <footer className="flex items-center justify-center px-5 py-3 text-xs text-quiet">
+          <a
+            className="hover:text-brand"
+            href="https://beian.miit.gov.cn/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             沪ICP备2026013272号-1
           </a>
         </footer>

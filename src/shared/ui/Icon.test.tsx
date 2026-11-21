@@ -25,8 +25,8 @@ it('图标统一画布、线宽、圆角和颜色继承，装饰图标不抢可�
 })
 
 it('尺寸和类名可按场景设置，不各自复制 SVG', () => {
-  const { container } = render(<Icon name="chevron-down" size={18} className="select-chevron" />)
-  expect(container.querySelector('svg')).toHaveClass('icon', 'select-chevron')
+  const { container } = render(<Icon name="chevron-down" size={18} className="text-subtle" />)
+  expect(container.querySelector('svg')).toHaveClass('inline-block', 'shrink-0', 'text-subtle')
   expect(container.querySelector('svg')).toHaveAttribute('width', '18')
   expect(container.querySelector('svg')).toHaveAttribute('height', '18')
 })

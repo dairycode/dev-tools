@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { TextTransformPanel } from '../../shared/ui/TextTransformPanel'
 import { Select } from '../../shared/ui/Select'
+import { Field } from '../../shared/ui/Controls'
 import { encodeBase64, decodeBase64, type TextEncoding } from './model'
 
 export default function Base64Tool() {
@@ -13,10 +14,7 @@ export default function Base64Tool() {
         { label: '解码', run: (text) => decodeBase64(text, encoding) },
       ]}
       options={
-        <div className="field compact-field">
-          <label id="text-encoding-label" htmlFor="text-encoding">
-            字符编码
-          </label>
+        <Field htmlFor="text-encoding" label="字符编码" className="mb-5 max-w-md">
           <Select<TextEncoding>
             id="text-encoding"
             value={encoding}
@@ -26,7 +24,7 @@ export default function Base64Tool() {
               { value: 'latin1', label: 'Latin-1' },
             ]}
           />
-        </div>
+        </Field>
       }
     />
   )

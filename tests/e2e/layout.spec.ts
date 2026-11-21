@@ -26,7 +26,7 @@ for (const viewport of [
         const bounds = await page.evaluate(() => {
           const controls = Array.from(
             document.querySelectorAll<HTMLElement>(
-              'main input, main textarea, main button, main .qr-preview, main .date-results',
+              'main input, main textarea, main button, main [data-slot="qr-preview"], main dl',
             ),
           )
           const root = document.documentElement
@@ -36,9 +36,9 @@ for (const viewport of [
             viewportHeight: innerHeight,
             hasHorizontalOverflow: root.scrollWidth > innerWidth,
             footerBottom: footer?.bottom,
-            hasTruncatedSelect: Array.from(document.querySelectorAll('.select-value')).some(
-              (value) => value.scrollWidth > value.clientWidth,
-            ),
+            hasTruncatedSelect: Array.from(
+              document.querySelectorAll('[data-slot="select-value"]'),
+            ).some((value) => value.scrollWidth > value.clientWidth),
             clippedControls: controls
               .filter((control) => {
                 const rect = control.getBoundingClientRect()
@@ -61,7 +61,7 @@ for (const viewport of [
         expect(bounds.scrollHeight, id).toBeLessThanOrEqual(bounds.viewportHeight + 1)
         expect(bounds.footerBottom, id).toBeLessThanOrEqual(bounds.viewportHeight + 1)
         if (id === 'timestamp') {
-          await expect(page.locator('.date-results button')).toHaveCount(12)
+          await expect(page.locator('main dl button')).toHaveCount(12)
           await expect(
             page.getByRole('region', { name: '日期转换为时间戳', exact: true }),
           ).toBeVisible()
@@ -81,7 +81,7 @@ test.describe('桌面滚轮与长内容', () => {
   test('边界不继续滚出空白，长文本仍能滚动页面和输入区，清空后恢复一屏', async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 720 })
     await openTool(page, 'url')
-    for (const selector of ['html', 'body', '.sidebar', 'textarea']) {
+    for (const selector of ['html', 'body', 'aside', 'textarea']) {
       expect(
         await page
           .locator(selector)
@@ -144,7 +144,7 @@ test.describe('桌面滚轮与长内容', () => {
       }),
     )
     await page.getByRole('button', { name: '全部展开', exact: true }).click()
-    const tree = page.locator('.json-tree')
+    const tree = page.locator('[data-slot="json-tree"]')
     expect(
       await tree.evaluate((element) => ({
         hasOverflow: element.scrollHeight > element.clientHeight,

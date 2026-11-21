@@ -34,7 +34,7 @@ const toolCases = [
 
 async function openTool(page: Page, id: string) {
   await page.goto(`./#/${id}`)
-  await expect(page.locator('.tool-card').first()).toBeVisible()
+  await expect(page.locator('[data-slot="tool-card"]').first()).toBeVisible()
   await expect(page.locator('main input, main textarea').first()).toBeVisible()
 }
 
@@ -51,8 +51,8 @@ for (const theme of ['light', 'dark'] as const) {
       await openTool(page, tool.id)
       await expect(page.getByRole('heading', { level: 1 })).toHaveText(tool.title)
       await expect(page.getByRole('navigation').getByRole('link')).toHaveCount(6)
-      await expect(page.locator('.tool-nav svg.icon')).toHaveCount(6)
-      await expect(page.locator('.sidebar-footer button')).toHaveCount(1)
+      await expect(page.getByRole('navigation').locator('svg')).toHaveCount(6)
+      await expect(page.getByRole('complementary').getByRole('button')).toHaveCount(1)
       await expect(
         page.locator(
           '.eyebrow, .brand-subtitle, .tool-description, .privacy-badge, .field-meta, .shortcut-hint, .system-theme',
@@ -262,7 +262,9 @@ test('JSON：精度、树操作、根节点、快捷键和非法输入', async (
   await expect(page.getByRole('button', { name: '折叠 /a.b', exact: true })).toBeVisible()
   await expect(page.getByRole('button', { name: '折叠 /a/b', exact: true })).toBeVisible()
   await input.fill('null')
-  await expect(page.locator('.json-value')).toHaveText('null')
+  await expect(
+    page.getByRole('region', { name: 'JSON 树视图' }).getByText('null', { exact: true }),
+  ).toBeVisible()
   await input.fill('{bad')
   await page.getByRole('button', { name: '格式化', exact: true }).click()
   await expect(input).toHaveValue('{bad')
@@ -328,7 +330,7 @@ test('首次切换所有工具无需额外脚本，每次下一帧即可操作�
           results.push({
             title: document.querySelector('h1')?.textContent,
             hasInput: document.querySelector(tool.input ?? '#timestamp-input') !== null,
-            hasCard: document.querySelector('.tool-card') !== null,
+            hasCard: document.querySelector('[data-slot="tool-card"]') !== null,
           })
         }
         return { results, loadingMessages }

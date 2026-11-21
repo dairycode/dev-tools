@@ -30,6 +30,18 @@
     ],
     "encodedBytes": 105223
   },
+  "tailwindUtilities": {
+    "stage": "布局与状态迁入组件工具类，真实重复样式由 React 组件复用；保留六工具同步加载与既有界面",
+    "date": "2026-11-21",
+    "method": "Google Chrome 158 新 context，整理前后独立生产 Nginx 容器的 URL 首屏 Resource Timing encodedBodySize；仅 JS/CSS gzip 响应体，不含 HTML/响应头；单次确定性资源体积，不作为新的耗时或弱网测量。整理前基线为 627afb7，对应 viewportLayout 的资源。",
+    "resources": [
+      { "path": "/assets/index-DK0JQGLu.js", "encodedBodySize": 101773 },
+      { "path": "/assets/index-vM7_ITuu.css", "encodedBodySize": 5361 }
+    ],
+    "encodedBytes": 107134,
+    "beforeEncodedBytes": 105223,
+    "deltaEncodedBytes": 1911
+  },
   "browser": "158.0.8127.37",
   "method": "同一 Chrome、1440x1000、本机 Nginx、每次新 context、预热后 7 轮交替采样；MutationObserver 记录 URL 控件出现时刻（非完整 TTI）；未模拟弱网/低端手机。旧版 dist 只读挂载，新版镜像内置文件。",
   "samples": {

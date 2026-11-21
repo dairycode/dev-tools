@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
-import { Button, TextArea, errorText, onShortcut } from '../../shared/ui/Controls'
+import { ActionBar, Button, Field, TextArea, errorText, onShortcut } from '../../shared/ui/Controls'
+import { InlineError, ToolCard } from '../../shared/ui/Panels'
 import { useToast } from '../../shared/ui/Toast'
 import { useClipboard } from '../../shared/hooks/useClipboard'
 import { useDebouncedValue } from '../../shared/hooks/useDebouncedValue'
@@ -29,9 +30,8 @@ export default function JsonTool() {
     }
   }
   return (
-    <div className="tool-card">
-      <div className="field">
-        <label htmlFor="json-input">输入 JSON</label>
+    <ToolCard>
+      <Field htmlFor="json-input" label="输入 JSON" className="mb-5">
         <TextArea
           id="json-input"
           value={input}
@@ -40,8 +40,8 @@ export default function JsonTool() {
           aria-keyshortcuts="Control+Enter Meta+Enter"
           placeholder={'请输入 JSON，例如 {"hello": "world"}'}
         />
-      </div>
-      <div className="action-bar">
+      </Field>
+      <ActionBar className="mb-5 last:mb-0">
         <Button variant="primary" onClick={() => transform(2)}>
           格式化
         </Button>
@@ -58,20 +58,19 @@ export default function JsonTool() {
         >
           清空
         </Button>
-      </div>
-      {parsed?.error && (
-        <p className="inline-error" role="status">
-          JSON 尚未有效：{parsed.error}
-        </p>
-      )}
+      </ActionBar>
+      {parsed?.error && <InlineError role="status">JSON 尚未有效：{parsed.error}</InlineError>}
       {parsed?.inspection &&
         (parsed.inspection.isLimited ? (
-          <p className="notice" role="status">
+          <p
+            className="mt-5 rounded-lg border border-line bg-panel p-4 text-sm text-subtle"
+            role="status"
+          >
             为避免页面卡顿，超大或过深数据暂不展开树视图；仍可格式化、压缩和复制。
           </p>
         ) : (
           <JsonTree key={settled} value={parsed.value} inspection={parsed.inspection} />
         ))}
-    </div>
+    </ToolCard>
   )
 }

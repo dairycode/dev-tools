@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
-import { Button, TextArea, errorText, onShortcut } from '../../shared/ui/Controls'
+import { ActionBar, Button, Field, TextArea, errorText, onShortcut } from '../../shared/ui/Controls'
+import { InlineError, ResultPanel, ToolCard } from '../../shared/ui/Panels'
 import { Select } from '../../shared/ui/Select'
 import { useClipboard } from '../../shared/hooks/useClipboard'
 import { useToast } from '../../shared/ui/Toast'
@@ -28,9 +29,8 @@ export default function HashTool() {
       )
   }
   return (
-    <div className="tool-card">
-      <div className="field">
-        <label htmlFor="hash-input">输入文本</label>
+    <ToolCard>
+      <Field htmlFor="hash-input" label="输入文本" className="mb-5">
         <TextArea
           id="hash-input"
           value={input}
@@ -39,15 +39,13 @@ export default function HashTool() {
           aria-keyshortcuts="Control+Enter Meta+Enter"
           placeholder="请输入要计算 Hash 的文本…"
         />
-      </div>
-      <div className="field">
-        <label
-          id="hash-algorithm-label"
-          htmlFor="hash-algorithm"
-          title="MD5 / SHA-1 仅用于兼容与校验，不适合密码存储"
-        >
-          选择 Hash 算法
-        </label>
+      </Field>
+      <Field
+        htmlFor="hash-algorithm"
+        label="选择 Hash 算法"
+        labelTitle="MD5 / SHA-1 仅用于兼容与校验，不适合密码存储"
+        className="mb-5"
+      >
         <Select<HashAlgorithm>
           id="hash-algorithm"
           value={algorithm}
@@ -59,16 +57,17 @@ export default function HashTool() {
             { value: 'sha512', label: 'SHA-512' },
           ]}
         />
-      </div>
-      <label className="checkbox-field">
+      </Field>
+      <label className="mb-5 flex items-start gap-2 text-sm text-subtle">
         <input
+          className="mt-1 size-4 shrink-0 accent-brand"
           type="checkbox"
           checked={trimInput}
           onChange={(event) => setTrimInput(event.target.checked)}
         />
         去除首尾空白
       </label>
-      <div className="action-bar">
+      <ActionBar className="mb-5 last:mb-0">
         <Button variant="primary" onClick={confirm}>
           计算Hash
         </Button>
@@ -81,28 +80,27 @@ export default function HashTool() {
         >
           清空
         </Button>
-      </div>
-      {result.error && (
-        <p role="alert" className="inline-error">
-          {result.error}
-        </p>
-      )}
+      </ActionBar>
+      {result.error && <InlineError>{result.error}</InlineError>}
       {result.value && (
-        <section className="result-panel" aria-label="Hash 结果">
-          <div className="result-heading">
-            <h2>Hash 结果</h2>
-            <Button onClick={() => void copy(result.value)}>复制结果</Button>
-          </div>
+        <ResultPanel
+          title="Hash 结果"
+          actions={
+            <Button size="small" onClick={() => void copy(result.value)}>
+              复制结果
+            </Button>
+          }
+        >
           <button
             type="button"
-            className="copyable-code"
+            className="block w-full p-4 text-left font-mono text-sm break-all text-brand [overflow-wrap:anywhere]"
             aria-label={`点击复制 Hash 值：${result.value}`}
             onClick={() => void copy(result.value)}
           >
             <code>{result.value}</code>
           </button>
-        </section>
+        </ResultPanel>
       )}
-    </div>
+    </ToolCard>
   )
 }

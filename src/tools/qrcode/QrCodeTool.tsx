@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
-import { Button, TextArea, errorText, onShortcut } from '../../shared/ui/Controls'
+import { ActionBar, Button, Field, TextArea, errorText, onShortcut } from '../../shared/ui/Controls'
+import { ToolCard } from '../../shared/ui/Panels'
 import { Icon } from '../../shared/ui/Icon'
 import { useToast } from '../../shared/ui/Toast'
 import { downloadImage } from '../../shared/browser/download'
@@ -53,9 +54,8 @@ export default function QrCodeTool() {
     }
   }
   return (
-    <div className="tool-card qr-tool">
-      <div className="field">
-        <label htmlFor="qr-input">输入内容</label>
+    <ToolCard className="grid items-start gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(240px,0.75fr)]">
+      <Field htmlFor="qr-input" label="输入内容">
         <TextArea
           id="qr-input"
           value={input}
@@ -64,8 +64,8 @@ export default function QrCodeTool() {
           aria-keyshortcuts="Control+Enter Meta+Enter"
           placeholder="请输入文本、网址或其他内容…"
         />
-      </div>
-      <div className="action-bar">
+      </Field>
+      <ActionBar className="lg:col-start-1">
         <Button variant="primary" disabled={isLoading} onClick={() => void generate()}>
           {isLoading ? '生成中…' : '生成二维码'}
         </Button>
@@ -81,19 +81,29 @@ export default function QrCodeTool() {
         >
           清空
         </Button>
-      </div>
-      <div className="qr-preview" aria-busy={isLoading}>
+      </ActionBar>
+      <div
+        data-slot="qr-preview"
+        className="flex min-h-75 items-center justify-center rounded-xl border border-dashed border-line bg-panel p-6 lg:col-start-2 lg:row-start-1 lg:row-span-2"
+        aria-busy={isLoading}
+      >
         {isLoading ? (
           <p role="status">正在生成二维码…</p>
         ) : image ? (
-          <img src={image} alt="生成的二维码" width="240" height="240" />
+          <img
+            className="h-auto max-w-full rounded-lg [image-rendering:pixelated]"
+            src={image}
+            alt="生成的二维码"
+            width="240"
+            height="240"
+          />
         ) : (
-          <div className="qr-placeholder">
-            <Icon name="qr-code" size={48} />
-            <p>二维码预览</p>
+          <div className="text-center text-quiet">
+            <Icon name="qr-code" size={48} className="opacity-40" />
+            <p className="mt-3">二维码预览</p>
           </div>
         )}
       </div>
-    </div>
+    </ToolCard>
   )
 }

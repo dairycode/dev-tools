@@ -1,5 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState, type KeyboardEvent } from 'react'
 import { Icon } from './Icon'
+import { textInputClassName } from './Controls'
 
 type SelectProps<Value extends string> = {
   id: string
@@ -131,7 +132,7 @@ export function Select<Value extends string>({
   return (
     <div
       ref={root}
-      className="select-control"
+      className="relative w-full max-w-md"
       onBlur={(event) => {
         if (!event.currentTarget.contains(event.relatedTarget)) setIsOpen(false)
       }}
@@ -142,7 +143,7 @@ export function Select<Value extends string>({
         type="button"
         role="combobox"
         tabIndex={0}
-        className="text-input select-trigger"
+        className={`group flex min-h-12 items-center justify-between gap-3 text-left max-md:text-[16px] aria-expanded:border-brand ${textInputClassName}`}
         aria-labelledby={`${id}-label`}
         aria-expanded={isOpen}
         aria-haspopup="listbox"
@@ -152,8 +153,14 @@ export function Select<Value extends string>({
         onClick={() => (isOpen ? setIsOpen(false) : openMenu())}
         onKeyDown={handleKeyDown}
       >
-        <span className="select-value">{options[selectedIndex]?.label ?? ''}</span>
-        <Icon name="chevron-down" size={18} className="select-chevron" />
+        <span data-slot="select-value" className="min-w-0 flex-1 truncate">
+          {options[selectedIndex]?.label ?? ''}
+        </span>
+        <Icon
+          name="chevron-down"
+          size={18}
+          className="text-subtle group-aria-expanded:rotate-180"
+        />
       </button>
       {isOpen && (
         <ul
@@ -161,7 +168,7 @@ export function Select<Value extends string>({
           id={listId}
           role="listbox"
           aria-labelledby={`${id}-label`}
-          className="select-menu"
+          className="absolute inset-x-0 top-[calc(100%+6px)] z-40 m-0 overflow-y-auto overscroll-none rounded-xl border border-line bg-surface p-1.5 shadow-[0_10px_28px_#0003] data-[side=top]:top-auto data-[side=top]:bottom-[calc(100%+6px)]"
           data-side={placement.isAbove ? 'top' : 'bottom'}
           style={{ maxHeight: placement.maxHeight }}
         >
@@ -172,7 +179,7 @@ export function Select<Value extends string>({
               role="option"
               aria-selected={option.value === value}
               data-active={index === activeIndex}
-              className="select-option"
+              className="flex min-h-11 cursor-pointer items-center justify-between gap-3 rounded-lg px-3 py-2 text-ink [overflow-wrap:anywhere] aria-selected:font-semibold aria-selected:text-brand data-[active=true]:bg-active"
               onMouseEnter={() => setActiveIndex(index)}
               onPointerDown={(event) => event.preventDefault()}
               onClick={() => choose(index)}

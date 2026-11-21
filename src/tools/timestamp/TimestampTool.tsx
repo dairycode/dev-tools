@@ -1,5 +1,13 @@
 import { useState } from 'react'
-import { Button, errorText, onShortcut } from '../../shared/ui/Controls'
+import {
+  ActionBar,
+  Button,
+  Field,
+  TextInput,
+  errorText,
+  onShortcut,
+} from '../../shared/ui/Controls'
+import { ToolCard } from '../../shared/ui/Panels'
 import { Select } from '../../shared/ui/Select'
 import { useClipboard } from '../../shared/hooks/useClipboard'
 import { useToast } from '../../shared/ui/Toast'
@@ -23,12 +31,16 @@ function Results({ result }: { result: DateResult | null }) {
     ['milliseconds', '毫秒时间戳'],
   ] as const
   return (
-    <dl className="date-results">
+    <dl className="overflow-hidden rounded-xl border border-line bg-panel">
       {fields.map(([key, label]) => (
-        <div key={key}>
-          <dt>{label}</dt>
-          <dd>
+        <div
+          key={key}
+          className="grid gap-1 border-b border-line px-4 py-3 last:border-b-0 sm:grid-cols-[120px_minmax(0,1fr)] lg:grid-cols-[88px_minmax(0,1fr)] lg:gap-x-2 lg:px-3 lg:py-2"
+        >
+          <dt className="text-sm text-subtle">{label}</dt>
+          <dd className="min-w-0">
             <button
+              className="w-full text-left font-mono text-sm text-brand [overflow-wrap:anywhere]"
               type="button"
               disabled={!result}
               aria-label={`复制${label}：${result?.[key] ?? '—'}`}
@@ -90,21 +102,24 @@ export default function TimestampTool() {
     setDateResult(convertLocalDate(parts.date, parts.time))
   }
   return (
-    <div className="timestamp-tool">
-      <section
-        className="tool-card"
+    <div className="grid items-start gap-5 lg:grid-cols-2">
+      <ToolCard
+        as="section"
+        className="lg:p-5"
         aria-labelledby="timestamp-to-date"
         onKeyDown={onShortcut(convertInput)}
       >
-        <h2 id="timestamp-to-date" className="section-title">
+        <h2
+          id="timestamp-to-date"
+          className="mb-5 border-b border-line pb-3 text-lg font-semibold lg:mb-4"
+        >
           时间戳转换为日期
         </h2>
-        <div className="timestamp-fields">
-          <div className="field">
-            <label htmlFor="timestamp-input">时间戳</label>
-            <input
+        <div className="grid grid-cols-1 gap-x-4 sm:grid-cols-[minmax(0,1fr)_160px] lg:grid-cols-[minmax(0,1fr)_128px]">
+          <Field htmlFor="timestamp-input" label="时间戳" className="mb-5 lg:mb-4">
+            <TextInput
               id="timestamp-input"
-              className="text-input font-mono"
+              className="font-mono"
               value={timestamp}
               placeholder="请输入 Unix 时间戳…"
               onChange={(event) => {
@@ -112,15 +127,13 @@ export default function TimestampTool() {
                 setTimestampResult(null)
               }}
             />
-          </div>
-          <div className="field">
-            <label
-              id="timestamp-unit-label"
-              htmlFor="timestamp-unit"
-              title="自动识别常见的 10 位秒 / 13 位毫秒；其他情况请手动选择单位"
-            >
-              单位
-            </label>
+          </Field>
+          <Field
+            htmlFor="timestamp-unit"
+            label="单位"
+            labelTitle="自动识别常见的 10 位秒 / 13 位毫秒；其他情况请手动选择单位"
+            className="mb-5 lg:mb-4"
+          >
             <Select<TimestampUnit>
               id="timestamp-unit"
               value={unit}
@@ -134,14 +147,17 @@ export default function TimestampTool() {
                 { value: 'milliseconds', label: '毫秒' },
               ]}
             />
-          </div>
+          </Field>
         </div>
-        <div className="action-bar">
-          <Button variant="primary" onClick={convertInput}>
+        <ActionBar className="mb-5 lg:mb-4 lg:gap-2">
+          <Button className="lg:px-3" variant="primary" onClick={convertInput}>
             转换
           </Button>
-          <Button onClick={currentTimestamp}>当前时间戳</Button>
+          <Button className="lg:px-3" onClick={currentTimestamp}>
+            当前时间戳
+          </Button>
           <Button
+            className="lg:px-3"
             variant="clear"
             onClick={() => {
               setTimestamp('')
@@ -151,52 +167,55 @@ export default function TimestampTool() {
           >
             清空
           </Button>
-        </div>
+        </ActionBar>
         <Results result={timestampResult} />
-      </section>
-      <section
-        className="tool-card"
+      </ToolCard>
+      <ToolCard
+        as="section"
+        className="lg:p-5"
         aria-labelledby="date-to-timestamp"
         onKeyDown={onShortcut(convertDate)}
       >
-        <h2 id="date-to-timestamp" className="section-title">
+        <h2
+          id="date-to-timestamp"
+          className="mb-5 border-b border-line pb-3 text-lg font-semibold lg:mb-4"
+        >
           日期转换为时间戳
         </h2>
-        <div className="date-fields">
-          <div className="field">
-            <label htmlFor="date-input">日期（本地时区）</label>
-            <input
+        <div className="grid grid-cols-1 gap-x-4 sm:grid-cols-2">
+          <Field htmlFor="date-input" label="日期（本地时区）" className="mb-5 lg:mb-4">
+            <TextInput
               type="date"
               id="date-input"
-              className="text-input"
               value={date}
               onChange={(event) => {
                 setDate(event.target.value)
                 setDateResult(null)
               }}
             />
-          </div>
-          <div className="field">
-            <label htmlFor="time-input">时间</label>
-            <input
+          </Field>
+          <Field htmlFor="time-input" label="时间" className="mb-5 lg:mb-4">
+            <TextInput
               type="time"
               step="1"
               id="time-input"
-              className="text-input"
               value={time}
               onChange={(event) => {
                 setTime(event.target.value)
                 setDateResult(null)
               }}
             />
-          </div>
+          </Field>
         </div>
-        <div className="action-bar">
-          <Button variant="primary" onClick={convertDate}>
+        <ActionBar className="mb-5 lg:mb-4 lg:gap-2">
+          <Button className="lg:px-3" variant="primary" onClick={convertDate}>
             转换
           </Button>
-          <Button onClick={currentDate}>当前时间</Button>
+          <Button className="lg:px-3" onClick={currentDate}>
+            当前时间
+          </Button>
           <Button
+            className="lg:px-3"
             variant="clear"
             onClick={() => {
               setDate('')
@@ -207,9 +226,9 @@ export default function TimestampTool() {
           >
             清空
           </Button>
-        </div>
+        </ActionBar>
         <Results result={dateResult} />
-      </section>
+      </ToolCard>
     </div>
   )
 }

@@ -8,6 +8,8 @@
 
 - React 19 + TypeScript strict、Vite 8；不引入 SSR、后端、账号、全局业务状态库。
 - 用户明确选择 Tailwind CSS 4，不考虑旧浏览器兼容。使用 @tailwindcss/vite、CSS-first 主题令牌，不引入 legacy/polyfill 构建层；验收目标为现代 Chromium、Firefox、WebKit。
+- 样式采用工具类优先：布局、间距、尺寸、断点和状态放在 React 组件中，`styles.css` 只留 `@theme`、暗色令牌覆盖、全局基础样式和减少动画的特殊规则，不再通过大量语义类与 `@apply` 转写 Tailwind。`Controls.tsx` / `Panels.tsx` 承载真实重复的输入、按钮、字段、卡片、错误和结果面板；仅共用输入外观及按钮/链接共同外观使用小型类名常量，不引入样式框架或新依赖。
+- 明暗主题统一使用 `--color-*` 令牌；主操作按钮的深蓝色独立于会随主题变化的文字品牌色。状态使用 Tailwind 的 hover / focus / disabled / aria / data / group 变体，完整类名字面量保证构建扫描可见。运行时文本框高度、下拉菜单可用高度、JSON 层级缩进继续使用必要的动态 style。测试优先按角色/名称定位，少量非语义容器用 data-slot，不依赖已移除的样式类。
 - TypeScript 5.9 与 typescript-eslint 的兼容范围匹配，不机械追逐不兼容的最新大版本。
 - Playwright 固定 1.64.1：1.65.1 的 Firefox 159 在 macOS ARM 上进行 JSON 页 axe 扫描时原生崩溃；同页用 1.64.1 / Firefox 157 完整扫描通过。没有跳过断言、禁用规则或修改页面来掩盖问题。
 - 采用轻量 wouter 的 hash 路由，提供 `#/url` 等工具直达、刷新、前进后退。初版 React Router 增加了不必要的首屏体积，验收阶段换用轻量路由，保留同样的导航行为。Vite 相对 base 支持根目录和子目录；输入内容绝不进入 URL。

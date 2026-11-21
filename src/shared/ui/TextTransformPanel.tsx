@@ -1,5 +1,6 @@
 import { useState, type ReactNode } from 'react'
-import { Button, TextArea, errorText, onShortcut } from './Controls'
+import { ActionBar, Button, Field, TextArea, errorText, onShortcut } from './Controls'
+import { ToolCard } from './Panels'
 import { useToast } from './Toast'
 import { useClipboard } from '../hooks/useClipboard'
 
@@ -25,10 +26,9 @@ export function TextTransformPanel({
     }
   }
   return (
-    <div className="tool-card">
+    <ToolCard>
       {options}
-      <div className="field">
-        <label htmlFor={id}>输入文本</label>
+      <Field htmlFor={id} label="输入文本" className="mb-5">
         <TextArea
           id={id}
           value={input}
@@ -37,8 +37,8 @@ export function TextTransformPanel({
           onKeyDown={onShortcut(() => execute(actions[0]))}
           aria-keyshortcuts="Control+Enter Meta+Enter"
         />
-      </div>
-      <div className="action-bar">
+      </Field>
+      <ActionBar className="mb-5 last:mb-0">
         {actions.map((action, index) => (
           <Button
             key={action.label}
@@ -61,7 +61,7 @@ export function TextTransformPanel({
         >
           清空
         </Button>
-      </div>
-    </div>
+      </ActionBar>
+    </ToolCard>
   )
 }

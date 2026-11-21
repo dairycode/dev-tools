@@ -1,6 +1,7 @@
 import type { ThemePreference } from '../browser/theme'
 import { Icon, type IconName } from './Icon'
 import { useTheme } from './ThemeProvider'
+import { utilityActionClassName } from './Controls'
 
 const modes = {
   system: { label: '跟随系统', icon: 'monitor', next: 'light' },
@@ -18,7 +19,7 @@ export function ThemeToggle() {
   return (
     <button
       type="button"
-      className="utility-button"
+      className={utilityActionClassName}
       onClick={() => choose(mode.next)}
       aria-label={`主题：${mode.label}，切换到${nextLabel}`}
       title={`切换到${nextLabel}`}

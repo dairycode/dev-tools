@@ -36,14 +36,23 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   return (
     <ToastContext.Provider value={{ notify, dismiss }}>
       {children}
-      <div className="toast-region" aria-live="polite" aria-atomic="true">
+      <div
+        className="pointer-events-none fixed top-4 right-4 z-50 max-w-[min(440px,calc(100vw-32px))]"
+        aria-live="polite"
+        aria-atomic="true"
+      >
         {message && (
           <div
-            className={`toast toast-${message.kind}`}
+            className={`pointer-events-auto flex items-start gap-4 rounded-xl border border-line px-4 py-3 text-sm shadow-lg [overflow-wrap:anywhere] ${message.kind === 'error' ? 'bg-error-surface text-error-ink' : 'bg-success-surface text-success-ink'}`}
             role={message.kind === 'error' ? 'alert' : 'status'}
           >
             <span>{message.text}</span>
-            <button type="button" onClick={dismiss} aria-label="关闭提示">
+            <button
+              className="inline-flex min-h-6 min-w-6 shrink-0 items-center justify-center p-1"
+              type="button"
+              onClick={dismiss}
+              aria-label="关闭提示"
+            >
               <Icon name="x" size={16} />
             </button>
           </div>

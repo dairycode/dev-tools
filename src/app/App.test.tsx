@@ -38,7 +38,7 @@ describe('简洁界面与统一图标', () => {
   it('六工具仅保留必要标签、操作与备案，导航统一用装饰 SVG', () => {
     renderApp()
     expect(screen.getByRole('contentinfo')).toHaveTextContent(/^沪ICP备2026013272号-1$/)
-    const icons = document.querySelectorAll('.tool-nav .nav-icon')
+    const icons = screen.getByRole('navigation').querySelectorAll('svg')
     expect(icons).toHaveLength(6)
     for (const icon of icons) {
       expect(icon.tagName).toBe('svg')
@@ -67,7 +67,7 @@ describe('单按钮三态主题', () => {
     const { themeButton } = renderApp()
     expect(themeButton).toHaveTextContent('跟随系统')
     expect(themeButton).toHaveAccessibleName('主题：跟随系统，切换到亮色模式')
-    expect(document.querySelectorAll('.sidebar-footer button')).toHaveLength(1)
+    expect(screen.getByRole('complementary').querySelectorAll('button')).toHaveLength(1)
     fireEvent.click(themeButton)
     expect(themeButton).toHaveTextContent('亮色模式')
     expect(themeButton).toHaveAccessibleName('主题：亮色模式，切换到暗色模式')

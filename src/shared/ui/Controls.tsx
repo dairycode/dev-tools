@@ -2,18 +2,93 @@ import {
   useLayoutEffect,
   useRef,
   type ButtonHTMLAttributes,
+  type HTMLAttributes,
+  type InputHTMLAttributes,
   type KeyboardEvent,
+  type ReactNode,
   type TextareaHTMLAttributes,
 } from 'react'
 
-type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
-  variant?: 'primary' | 'secondary' | 'clear'
-}
-export function Button({ variant = 'secondary', className = '', ...props }: ButtonProps) {
-  return <button type="button" className={`btn btn-${variant} ${className}`} {...props} />
+const buttonVariants = {
+  primary:
+    'border-action bg-action text-white enabled:hover:border-action-hover enabled:hover:bg-action-hover enabled:hover:text-white',
+  secondary:
+    'border-line bg-surface text-subtle enabled:hover:border-brand enabled:hover:bg-panel enabled:hover:text-ink',
+  clear:
+    'border-line bg-surface text-danger sm:ml-auto enabled:hover:border-brand enabled:hover:bg-panel enabled:hover:text-ink',
 }
 
-export function TextArea({ value, ...props }: TextareaHTMLAttributes<HTMLTextAreaElement>) {
+type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
+  variant?: keyof typeof buttonVariants
+  size?: 'default' | 'small'
+}
+export function Button({
+  variant = 'secondary',
+  size = 'default',
+  className = '',
+  ...props
+}: ButtonProps) {
+  return (
+    <button
+      type="button"
+      className={`inline-flex items-center justify-center rounded-lg border font-medium transition-[background-color,border-color] duration-150 ${size === 'small' ? 'min-h-9 px-3 py-1.5 text-xs' : 'min-h-11 px-5 py-2.5 text-sm'} ${buttonVariants[variant]} ${className}`}
+      {...props}
+    />
+  )
+}
+
+export const utilityActionClassName =
+  'flex min-h-11 flex-1 items-center justify-center gap-2 rounded-lg border border-line px-2 py-2.5 text-xs font-medium text-subtle no-underline hover:bg-panel'
+
+export const textInputClassName =
+  'min-w-0 w-full rounded-xl border border-line bg-panel px-4 py-3 text-ink transition-[border-color,box-shadow] duration-150 placeholder:text-quiet placeholder:opacity-85 focus:border-brand focus:shadow-[0_0_0_3px_var(--color-focus)] focus:outline-none'
+
+export function TextInput({ className = '', ...props }: InputHTMLAttributes<HTMLInputElement>) {
+  return (
+    <input
+      className={`block min-h-12 max-md:text-[16px] ${textInputClassName} ${className}`}
+      {...props}
+    />
+  )
+}
+
+export function Field({
+  htmlFor,
+  label,
+  labelTitle,
+  className = '',
+  children,
+}: {
+  htmlFor: string
+  label: string
+  labelTitle?: string
+  className?: string
+  children: ReactNode
+}) {
+  return (
+    <div className={`min-w-0 ${className}`}>
+      <label
+        id={`${htmlFor}-label`}
+        htmlFor={htmlFor}
+        title={labelTitle}
+        className="mb-2 block text-sm font-semibold text-subtle"
+      >
+        {label}
+      </label>
+      {children}
+    </div>
+  )
+}
+
+export function ActionBar({ className = '', ...props }: HTMLAttributes<HTMLDivElement>) {
+  return <div className={`grid grid-cols-2 gap-3 sm:flex sm:flex-wrap ${className}`} {...props} />
+}
+
+export function TextArea({
+  value,
+  className = '',
+  ...props
+}: TextareaHTMLAttributes<HTMLTextAreaElement>) {
   const ref = useRef<HTMLTextAreaElement>(null)
   useLayoutEffect(() => {
     const area = ref.current
@@ -25,7 +100,7 @@ export function TextArea({ value, ...props }: TextareaHTMLAttributes<HTMLTextAre
     <textarea
       ref={ref}
       value={value}
-      className="text-input text-area"
+      className={`block min-h-[clamp(128px,24dvh,180px)] max-h-[70dvh] resize-y overflow-y-auto overscroll-none font-mono text-sm leading-[1.8] [tab-size:2] ${textInputClassName} ${className}`}
       spellCheck={false}
       autoCapitalize="off"
       autoCorrect="off"
