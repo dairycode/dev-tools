@@ -62,10 +62,15 @@ function Layout() {
         跳转到工具内容
       </a>
       <aside className="flex flex-col border-b border-line bg-surface md:sticky md:top-0 md:h-dvh md:overflow-y-auto md:overscroll-none md:border-r md:border-b-0">
-        <div className="flex items-center gap-3 px-5 pt-4 pb-2 md:px-6 md:pt-7 md:pb-6">
-          <span className="flex size-8.5 shrink-0 items-center justify-center rounded-xl bg-action text-white md:size-10.5">
-            <Icon name="code" size={26} className="size-5.5 md:size-6.5" />
-          </span>
+        <div className="flex items-center gap-2 px-5 pt-4 pb-2 md:px-6 md:pt-7 md:pb-6">
+          <img
+            src={`${import.meta.env.BASE_URL}favicon.png`}
+            alt=""
+            aria-hidden="true"
+            width={48}
+            height={48}
+            className="size-10 shrink-0 md:size-12"
+          />
           <p className="text-lg font-bold tracking-wide">开发工具包</p>
         </div>
         <nav

@@ -35,6 +35,19 @@ function systemTheme(isDark: boolean) {
 }
 
 describe('简洁界面与统一图标', () => {
+  it('品牌共用 PNG favicon，放大并收紧文字间距，不重复朗读品牌名称', () => {
+    renderApp()
+    const brand = screen.getByRole('complementary').querySelector('img')
+    expect(brand).toHaveAttribute('src', `${import.meta.env.BASE_URL}favicon.png`)
+    expect(brand).toHaveAttribute('alt', '')
+    expect(brand).toHaveAttribute('aria-hidden', 'true')
+    expect(brand).toHaveAttribute('width', '48')
+    expect(brand).toHaveAttribute('height', '48')
+    expect(brand).toHaveClass('size-10', 'md:size-12', 'shrink-0')
+    expect(brand?.parentElement).toHaveClass('gap-2')
+    expect(screen.getByText('开发工具包')).toBeVisible()
+  })
+
   it('六工具仅保留必要标签、操作与备案，导航统一用装饰 SVG', () => {
     renderApp()
     expect(screen.getByRole('contentinfo')).toHaveTextContent(/^沪ICP备2026013272号-1$/)

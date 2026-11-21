@@ -53,6 +53,16 @@ for (const theme of ['light', 'dark'] as const) {
       await expect(page.getByRole('navigation').getByRole('link')).toHaveCount(6)
       await expect(page.getByRole('navigation').locator('svg')).toHaveCount(6)
       await expect(page.getByRole('complementary').getByRole('button')).toHaveCount(1)
+      const brand = page.getByRole('complementary').locator('img[alt=""]')
+      await expect(brand).toBeVisible()
+      await expect
+        .poll(() =>
+          brand.evaluate((image: HTMLImageElement) => image.complete && image.naturalWidth > 0),
+        )
+        .toBe(true)
+      expect(await brand.evaluate((image: HTMLImageElement) => image.currentSrc)).toBe(
+        await page.locator('link[rel="icon"]').evaluate((icon: HTMLLinkElement) => icon.href),
+      )
       await expect(
         page.locator(
           '.eyebrow, .brand-subtitle, .tool-description, .privacy-badge, .field-meta, .shortcut-hint, .system-theme',
@@ -121,6 +131,56 @@ for (const theme of ['light', 'dark'] as const) {
     })
   }
 }
+
+test('品牌 PNG：透明背景、紧凑留白、尺寸与文字间距', async ({ page }) => {
+  await openTool(page, 'url')
+  const brand = page.getByRole('complementary').locator('img[alt=""]')
+  await expect
+    .poll(() =>
+      brand.evaluate((image: HTMLImageElement) => image.complete && image.naturalWidth > 0),
+    )
+    .toBe(true)
+  const pixels = await brand.evaluate((image: HTMLImageElement) => {
+    const canvas = document.createElement('canvas')
+    canvas.width = 64
+    canvas.height = 64
+    const context = canvas.getContext('2d')
+    if (!context) throw new Error('无法创建图标透明度检查画布')
+    context.drawImage(image, 0, 0, 64, 64)
+    const data = context.getImageData(0, 0, 64, 64).data
+    const opaquePixels = Array.from({ length: 64 * 64 }, (_, index) => index).filter(
+      (index) => data[index * 4 + 3]! >= 128,
+    )
+    const bounds = image.getBoundingClientRect()
+    const label = image.nextElementSibling?.getBoundingClientRect()
+    if (!label) throw new Error('品牌名称不存在')
+    return {
+      paintedWidth: new Set(opaquePixels.map((index) => index % 64)).size,
+      paintedHeight: new Set(opaquePixels.map((index) => Math.floor(index / 64))).size,
+      width: bounds.width,
+      height: bounds.height,
+      textGap: label.left - bounds.right,
+      centerDifference: Math.abs(label.y + label.height / 2 - bounds.y - bounds.height / 2),
+      cornerAlpha: [
+        [0, 0],
+        [63, 0],
+        [0, 63],
+        [63, 63],
+      ].map(([x, y]) => context.getImageData(x!, y!, 1, 1).data[3]),
+      forehead: Array.from(context.getImageData(32, 25, 1, 1).data),
+    }
+  })
+  expect(pixels.cornerAlpha).toEqual([0, 0, 0, 0])
+  expect(pixels.forehead[3]).toBe(255)
+  expect(pixels.forehead.slice(0, 3).every((channel) => channel >= 245)).toBe(true)
+  expect(pixels.paintedWidth).toBeGreaterThanOrEqual(60)
+  expect(pixels.paintedHeight).toBeGreaterThanOrEqual(47)
+  const expectedSize = page.viewportSize()!.width >= 768 ? 48 : 40
+  expect(pixels.width).toBe(expectedSize)
+  expect(pixels.height).toBe(expectedSize)
+  expect(pixels.textGap).toBe(8)
+  expect(pixels.centerDifference).toBeLessThan(1)
+})
 
 test('URL：编码、解码、URI、非法输入、快捷键与清空', async ({ page }) => {
   await openTool(page, 'url')
@@ -469,6 +529,12 @@ test('Docker：健康检查、缓存、MIME、缺失资源与安全头', async (
   expect(asset.headers()['content-type']).toMatch(/javascript/)
   expect(asset.headers()['cache-control']).toContain('immutable')
   expect(asset.headers()['content-encoding']).toBe('gzip')
+  const favicon = await request.get('./favicon.png')
+  expect(favicon.status()).toBe(200)
+  expect(favicon.headers()['content-type']).toContain('image/png')
+  expect(await favicon.body()).toEqual(
+    await readFile(new URL('../../public/favicon.png', import.meta.url)),
+  )
   const missing = await request.get('./assets/not-found.js')
   expect(missing.status()).toBe(404)
   expect(missing.headers()['cache-control']).toBe('no-cache')
