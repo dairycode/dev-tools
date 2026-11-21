@@ -1,183 +1,118 @@
-# 🔧 开发工具包
+# 开发工具包
 
-基于Vue 3和Vite构建的现代化开发工具网页，包含URL编码/解码、Unix时间戳转换和二维码生成功能。
+纯浏览器端的开发者工具箱。基于 **React 19 + TypeScript + Vite 8 + Tailwind CSS 4**，所有转换都在本地完成，**不上传输入、不保存输入历史**。
 
-## ✨ 功能特性
+## 功能
 
-### 🔗 URL编码/解码
-- **URL编码**：将特殊字符转换为URL安全的格式
-- **URL解码**：将编码后的URL转换回原始格式
-- **实时转换**：支持一键编码/解码操作
-- **错误处理**：完善的错误提示和验证
+| 工具   | 能力                                                                     |
+| ------ | ------------------------------------------------------------------------ |
+| URL    | 组件编码、解码、保留网址结构的 URI 编码                                  |
+| Base64 | UTF-8 中文/emoji 编解码，以及兼容旧版字节语义的 Latin-1 模式             |
+| Hash   | 实时计算 MD5、SHA-1、SHA-256、SHA-512，支持去除空白/按原文计算           |
+| 时间戳 | 时间戳与本地日期双向转换，自动/显式秒毫秒单位，北京、本地、UTC、ISO 结果 |
+| 二维码 | 本地生成、预览、下载可扫描的 PNG，输入改变后使旧结果失效                 |
+| JSON   | 无损数字精度的格式化/压缩，保留重复键/转义，树形节点及全部展开/折叠      |
 
-### 🔐 Base64编码/解码
-- **Base64编码**：将文本转换为Base64格式
-- **Base64解码**：解码Base64字符串
-- **实时转换**：支持快捷键操作
+支持桌面与手机、Ctrl/Cmd+Enter 快捷键、复制、工具直达链接和前进后退。主题通过一个按钮按「跟随系统 → 亮色 → 暗色」循环，兼容旧主题存储键 `dev-tools-theme`。切换工具后重置输入，不持久化敏感文本。
 
-### 🔒 Hash编码
-- **多种Hash算法**：支持MD5、SHA-1、SHA-256、SHA-512
-- **实时计算**：输入即时显示Hash结果
-- **安全应用**：密码加密、数据完整性校验
+> Base64 不是加密；MD5/SHA-1 不能用于安全密码存储。自动识别时间戳单位是启发式规则，历史或远期时间请明确选择秒/毫秒。
 
-### ⏰ Unix时间戳转换
-- **时间戳转日期**：将Unix时间戳转换为可读的日期时间
-- **当前时间戳**：一键获取当前时间的Unix时间戳
-- **多种格式**：支持本地时间、UTC时间、ISO格式显示
-- **毫秒支持**：同时显示秒级和毫秒级时间戳
+## 本地开发
 
-### 📱 二维码生成
-- **文本转二维码**：将任意文本内容生成二维码
-- **URL二维码**：生成网址的二维码，方便手机扫描访问
-- **下载功能**：支持将生成的二维码下载为PNG图片
-- **高质量输出**：清晰的二维码图像，支持多种尺寸
+需要 Node.js **24.15+（24 LTS）或 26+**，使用 npm：
 
-### 📄 JSON格式化
-- **JSON格式化**：美化JSON数据，使其易于阅读
-- **JSON压缩**：压缩JSON数据，减少体积
-- **树视图**：以树形结构展示JSON数据
-  - 支持折叠/展开节点
-  - 语法高亮显示
-  - 显示数据类型（对象、数组、字符串、数字等）
-  - 显示数组/对象大小
-  - 一键全部展开/折叠
-- **文本视图**：传统的文本格式显示
-- **错误提示**：清晰的JSON语法错误提示
-
-### 🌓 暗黑模式
-- **主题切换**：支持亮色/暗黑主题一键切换
-- **自动保存**：记住用户的主题偏好设置
-- **系统同步**：自动适配系统主题偏好
-- **护眼舒适**：暗黑模式下减少眼睛疲劳
-
-## 🚀 快速开始
-
-### 安装依赖
 ```bash
-npm install
-```
-
-### 开发模式
-```bash
+npm ci
 npm run dev
 ```
 
-### 构建生产版本
+默认地址：<http://127.0.0.1:3000>。
+
 ```bash
-npm run build
+npm run build       # 类型检查 + 生产构建，产物在 dist/
+npm run preview     # 预览生产构建，端口 4173
 ```
 
-### 预览生产版本
+按用户要求以现代浏览器为目标，不保留旧版浏览器兼容层。浏览器测试覆盖 Chromium、Firefox、WebKit 及手机视口；WebKit 测试不等同于所有 iOS/Safari 真机均已实测。
+
+## Docker 部署（推荐）
+
+需要支持 BuildKit 的 Docker 和 Docker Compose v2.20+：
+
 ```bash
-npm run preview
+docker compose up -d --build
 ```
 
-## 🎨 界面特性
+访问 <http://localhost:8080>。修改宿主端口：
 
-- **侧边栏导航**：清晰的侧边栏设计，功能分类一目了然
-- **暗黑模式**：支持亮色/暗黑主题切换，护眼更舒适
-- **现代化设计**：简洁优雅的界面风格和卡片式布局
-- **响应式布局**：完美适配桌面端和移动端
-- **交互动画**：流畅的悬停效果和按钮动画
-- **用户友好**：清晰的操作提示和错误信息
-- **GitHub链接**：一键访问项目源代码
-
-## ⌨️ 快捷键
-
-- **Ctrl+Enter** (Windows) 或 **Cmd+Enter** (Mac)：快速执行当前工具的主要功能
-- **点击输出区域**：自动复制结果到剪贴板
-- **主题切换按钮**：位于侧边栏底部，随时切换亮色/暗黑模式
-
-## 🛠️ 技术栈
-
-- **Vue 3**：使用Composition API和响应式系统
-- **Vite**：快速的构建工具和开发服务器
-- **QRCode.js**：二维码生成库
-- **CryptoJS**：加密算法库
-- **CSS3**：Flexbox、Grid布局、CSS变量、动画
-- **Composables**：可复用的组合式函数模式
-- **LocalStorage**：主题偏好持久化存储
-
-## 📁 项目结构
-
+```bash
+PORT=9000 docker compose up -d --build
 ```
+
+多阶段构建：Node 构建 → 非 root Nginx。运行容器只包含静态文件，使用只读文件系统、临时目录和健康检查，不需要 Node 服务、数据库或数据卷。
+
+```bash
+docker compose ps
+docker compose logs -f --tail=100
+docker compose down
+```
+
+服务器更新、HTTPS/反向代理、子路径、镜像源和回滚见 [部署说明](docs/deployment.md)。
+
+## 验证
+
+```bash
+npm run verify
+# 类型、lint、格式、单元/组件测试及核心逻辑覆盖率、生产构建
+
+npx playwright install --with-deps chromium firefox webkit
+npm run test:e2e
+# 自动构建并启动生产预览，测试三个浏览器与两种手机视口
+
+npm run test:docker
+# 构建并启动只读/非 root 容器，运行完整浏览器矩阵和 Chromium 子目录验收
+# 使用独立 Compose 项目，结束后自动清理测试容器
+```
+
+容器测试默认使用 `18080`，可通过 `TEST_PORT` 修改。已有容器也可以直接验收：
+
+```bash
+E2E_CONTAINER=1 E2E_BASE_URL=http://127.0.0.1:8080/ npm run test:e2e
+SUBPATH_UPSTREAM=http://127.0.0.1:8080/ npm run test:subpath -- --project=chromium
+```
+
+容器验收报告：`npx playwright show-report playwright-report/root`，子目录报告将末尾改为 `subpath`；单独运行 `test:e2e` 时用默认 `npx playwright show-report`。覆盖率报告位于 `coverage/index.html`。CI 同时保留根目录与子目录报告，执行同一条检查链，不自动向生产环境发布。
+
+Playwright 固定 1.64.1，以避开 1.65.1 配套 Firefox 159 在本机 axe 扫描时的原生崩溃；没有删减断言。`npm ci` 使用已验证的锁文件，不要单独替换浏览器可执行文件。
+
+## 目录
+
+```text
 src/
-├── components/
-│   ├── UrlEncoder.vue           # URL编码/解码组件
-│   ├── Base64Encoder.vue        # Base64编码/解码组件
-│   ├── HashEncoder.vue          # Hash编码组件
-│   ├── TimestampConverter.vue   # 时间戳转换组件
-│   ├── QrCodeGenerator.vue      # 二维码生成组件
-│   ├── JsonFormatter.vue        # JSON格式化组件
-│   └── JsonTreeNode.vue         # JSON树视图节点组件
-├── composables/
-│   └── useTheme.js              # 主题切换逻辑
-├── App.vue                      # 主应用组件
-├── main.js                      # 应用入口
-└── style.css                    # 全局样式
+├── app/           # 布局、路由、唯一工具注册表、错误隔离
+├── tools/         # 每工具独立目录：页面、纯 model、测试
+├── shared/        # 共享 UI、hooks、剪贴板/下载/主题适配器
+├── test/          # 测试初始化
+└── styles.css     # Tailwind 4 入口、主题令牌、共享组件样式
+tests/e2e/         # 功能、截图、无障碍、隐私、容器 HTTP 验收
+docker/            # Nginx 配置
 ```
 
-## 🔧 自定义配置
+新增工具：新建 `src/tools/<id>/` → 编写页面与 model 测试 → 在 `src/app/registry.ts` 注册。无需再单独维护一份导航或路由列表。
 
-### 修改二维码样式
-在 `QrCodeGenerator.vue` 组件中可以修改二维码的样式：
+页面图标统一在 `src/shared/ui/Icon.tsx` 维护，使用同一套线性 SVG；主题三态按钮位于 `src/shared/ui/ThemeToggle.tsx`。
 
-```javascript
-await QRCode.toCanvas(this.$refs.qrCanvas, this.inputText, {
-  width: 200,        // 二维码尺寸
-  margin: 2,         // 边距
-  color: {
-    dark: '#000000',   // 二维码颜色
-    light: '#FFFFFF'   // 背景颜色
-  }
-})
-```
+- [架构与行为决策](docs/design.md)
+- [功能矩阵与实际验收](docs/acceptance.md)
+- [Docker 部署](docs/deployment.md)
+- [开发约定](AGENTS.md)
 
-### 修改主题颜色
-在 [src/style.css](src/style.css) 中修改CSS变量来改变主题颜色：
+## 维护注意
 
-```css
-:root {
-  --primary-color: #667eea;
-  --secondary-color: #764ba2;
-}
+- `crypto-js` 已停止维护；本次为保留四种同步摘要行为继续使用，已有标准向量测试。当前 `npm audit` 无已知漏洞不代表未来永远安全，需持续跟踪依赖与基础镜像公告。
+- 六个工具全部同步加载，切换不请求额外工具脚本、不显示加载占位；下拉框为页面自绘，统一主题与键盘操作。
+- 真实验收数据、截图、性能开销及未覆盖的真机/部署环境见 [验收记录](docs/acceptance.md)。同步切换以增加首屏脚本为代价，不代表弱网首屏一定优于旧版。
 
-.dark {
-  --bg-primary: #1a1a1a;
-  --bg-secondary: #242424;
-  /* 更多暗黑模式变量... */
-}
-```
+## 许可证
 
-## 📱 浏览器兼容性
-
-- Chrome 60+
-- Firefox 55+
-- Safari 12+
-- Edge 79+
-
-## 🚀 部署
-
-### 构建生产版本
-```bash
-npm run build
-```
-
-构建完成后，`dist` 目录包含所有静态文件，可以直接部署到任何静态文件服务器。
-
-### 部署到GitHub Pages
-1. 构建项目：`npm run build`
-2. 将 `dist` 目录的内容推送到GitHub仓库的 `gh-pages` 分支
-3. 在GitHub仓库设置中启用GitHub Pages
-
-## 🤝 贡献
-
-欢迎提交Issue和Pull Request来改进这个工具！
-
-## 📄 许可证
-
-MIT License - 可自由使用和修改
-
-## 📞 联系方式
-
-如有问题或建议，请通过GitHub Issues联系。 
+[MIT](LICENSE)。
