@@ -2,6 +2,16 @@
 
 node_modules
 dist
+coverage
+.vitest
+playwright-report
+test-results
+artifacts
+/docs/screenshots/
+*.tsbuildinfo
+.env
+.env.*
+!.env.example
 
 dev-tools.tar
 send-dev-tools.sh

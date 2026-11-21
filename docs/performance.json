@@ -1,0 +1,161 @@
+{
+  "historicalStage": "以下 samples / median 为 UI 反馈修正前的首轮样本：URL 同步，其余五工具懒加载；不能代表当前全同步版本的首屏耗时。",
+  "followup": {
+    "stage": "六工具全部同步加载、页面自绘下拉框",
+    "date": "2026-11-21",
+    "method": "Google Chrome 158 新 context，真实生产 Nginx 的 URL 首屏 Resource Timing encodedBodySize；仅 JS/CSS gzip 响应体，不含 HTML/响应头；单次确定性资源体积，不作为新的耗时或弱网测量。",
+    "resources": [
+      { "path": "/assets/index-oChv4rYb.js", "encodedBodySize": 100087 },
+      { "path": "/assets/index-Bgsl__Aq.css", "encodedBodySize": 5568 }
+    ],
+    "encodedBytes": 105655
+  },
+  "uiCleanup": {
+    "stage": "界面精简、三态主题按钮与统一 SVG 图标；仍为六工具同步加载",
+    "date": "2026-11-21",
+    "method": "Google Chrome 158 新 context，真实生产 Nginx 的 URL 首屏 Resource Timing encodedBodySize；仅 JS/CSS gzip 响应体，不含 HTML/响应头；单次确定性资源体积，不作为新的耗时或弱网测量。",
+    "resources": [
+      { "path": "/assets/index-DoJyRl_E.js", "encodedBodySize": 99840 },
+      { "path": "/assets/index-BAQBF_7O.css", "encodedBodySize": 5267 }
+    ],
+    "encodedBytes": 105107
+  },
+  "viewportLayout": {
+    "stage": "禁止边界回弹与初始一屏布局；时间戳/二维码桌面并排",
+    "date": "2026-11-21",
+    "method": "Google Chrome 158 新 context，真实生产 Nginx 的 URL 首屏 Resource Timing encodedBodySize；仅 JS/CSS gzip 响应体，不含 HTML/响应头；单次确定性资源体积，不作为新的耗时或弱网测量。",
+    "resources": [
+      { "path": "/assets/index-BaUyer3F.js", "encodedBodySize": 99842 },
+      { "path": "/assets/index-ACggv9Gy.css", "encodedBodySize": 5381 }
+    ],
+    "encodedBytes": 105223
+  },
+  "tailwindUtilities": {
+    "stage": "布局与状态迁入组件工具类，真实重复样式由 React 组件复用；保留六工具同步加载与既有界面",
+    "date": "2026-11-21",
+    "method": "Google Chrome 158 新 context，整理前后独立生产 Nginx 容器的 URL 首屏 Resource Timing encodedBodySize；仅 JS/CSS gzip 响应体，不含 HTML/响应头；单次确定性资源体积，不作为新的耗时或弱网测量。整理前基线为 627afb7，对应 viewportLayout 的资源。",
+    "resources": [
+      { "path": "/assets/index-DK0JQGLu.js", "encodedBodySize": 101773 },
+      { "path": "/assets/index-vM7_ITuu.css", "encodedBodySize": 5361 }
+    ],
+    "encodedBytes": 107134,
+    "beforeEncodedBytes": 105223,
+    "deltaEncodedBytes": 1911
+  },
+  "unifiedWorkspace": {
+    "stage": "统一右侧工作区留白/宽度、编辑区设置和操作栏，JSON 连续预览保留旧树直到新预览提交",
+    "date": "2026-11-21",
+    "method": "Google Chrome 158 新 context，真实生产 Nginx 的 URL 首屏 Resource Timing encodedBodySize；仅 JS/CSS gzip 响应体，不含 HTML/响应头；单次确定性资源体积，不作为新的耗时或弱网测量。",
+    "resources": [
+      { "path": "/assets/index-CrqdQEaQ.js", "encodedBodySize": 101989 },
+      { "path": "/assets/index-Dr0XTH2o.css", "encodedBodySize": 5503 }
+    ],
+    "encodedBytes": 107492
+  },
+  "browser": "158.0.8127.37",
+  "method": "同一 Chrome、1440x1000、本机 Nginx、每次新 context、预热后 7 轮交替采样；MutationObserver 记录 URL 控件出现时刻（非完整 TTI）；未模拟弱网/低端手机。旧版 dist 只读挂载，新版镜像内置文件。",
+  "samples": {
+    "before": [
+      {
+        "inputReady": 37,
+        "dcl": 37,
+        "fcp": 48,
+        "encodedBytes": 73347
+      },
+      {
+        "inputReady": 35.799999952316284,
+        "dcl": 35.799999952316284,
+        "fcp": 52,
+        "encodedBytes": 73347
+      },
+      {
+        "inputReady": 36.700000047683716,
+        "dcl": 36.700000047683716,
+        "fcp": 44,
+        "encodedBytes": 73347
+      },
+      {
+        "inputReady": 39.799999952316284,
+        "dcl": 39.799999952316284,
+        "fcp": 48,
+        "encodedBytes": 73347
+      },
+      {
+        "inputReady": 39.10000002384186,
+        "dcl": 39.10000002384186,
+        "fcp": 52,
+        "encodedBytes": 73347
+      },
+      {
+        "inputReady": 38.5,
+        "dcl": 38.5,
+        "fcp": 52,
+        "encodedBytes": 73347
+      },
+      {
+        "inputReady": 36.699999928474426,
+        "dcl": 36.699999928474426,
+        "fcp": 48,
+        "encodedBytes": 73347
+      }
+    ],
+    "after": [
+      {
+        "inputReady": 41.799999952316284,
+        "dcl": 17.600000023841858,
+        "fcp": 68,
+        "encodedBytes": 81308
+      },
+      {
+        "inputReady": 41.09999990463257,
+        "dcl": 16.399999976158142,
+        "fcp": 64,
+        "encodedBytes": 81308
+      },
+      {
+        "inputReady": 45.10000002384186,
+        "dcl": 17.600000023841858,
+        "fcp": 60,
+        "encodedBytes": 81308
+      },
+      {
+        "inputReady": 44.40000009536743,
+        "dcl": 16.700000047683716,
+        "fcp": 60,
+        "encodedBytes": 81308
+      },
+      {
+        "inputReady": 45.700000047683716,
+        "dcl": 16.5,
+        "fcp": 68,
+        "encodedBytes": 81308
+      },
+      {
+        "inputReady": 45.60000002384186,
+        "dcl": 18.5,
+        "fcp": 64,
+        "encodedBytes": 81308
+      },
+      {
+        "inputReady": 42.799999952316284,
+        "dcl": 19,
+        "fcp": 64,
+        "encodedBytes": 81308
+      }
+    ]
+  },
+  "median": {
+    "before": {
+      "inputReady": 37,
+      "dcl": 37,
+      "fcp": 48,
+      "encodedBytes": 73347
+    },
+    "after": {
+      "inputReady": 44.40000009536743,
+      "dcl": 17.600000023841858,
+      "fcp": 64,
+      "encodedBytes": 81308
+    }
+  }
+}

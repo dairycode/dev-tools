@@ -1,0 +1,17 @@
+.git
+.github
+node_modules
+dist
+coverage
+.vitest
+playwright-report
+test-results
+artifacts
+docs
+tests
+scripts
+.env
+.env.*
+*.log
+*.tar
+.DS_Store

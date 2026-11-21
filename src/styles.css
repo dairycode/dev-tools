@@ -1,0 +1,99 @@
+@import 'tailwindcss' source('./');
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  --color-surface: #ffffff;
+  --color-panel: #f5f7fb;
+  --color-muted: #eaf0f8;
+  --color-active: #e9f2ff;
+  --color-ink: #17253b;
+  --color-subtle: #46566d;
+  --color-quiet: #596b83;
+  --color-line: #dbe3ee;
+  --color-brand: #1767bc;
+  --color-action: #1767bc;
+  --color-action-hover: #10549e;
+  --color-focus: #bfdbfe;
+  --color-danger: #b42335;
+  --color-success-surface: #ecfdf3;
+  --color-success-ink: #166534;
+  --color-error-surface: #fff1f2;
+  --color-error-ink: #a81732;
+  --color-json-string: #187040;
+  --color-json-literal: #9352b3;
+}
+
+:root.dark {
+  --color-surface: #172131;
+  --color-panel: #101824;
+  --color-muted: #253247;
+  --color-active: #223b58;
+  --color-ink: #e5edf8;
+  --color-subtle: #b8c6d9;
+  --color-quiet: #9aacc3;
+  --color-line: #34445a;
+  --color-brand: #86bbf5;
+  --color-focus: #31547c;
+  --color-danger: #ffb0ba;
+  --color-success-surface: #153728;
+  --color-success-ink: #a4e8be;
+  --color-error-surface: #442532;
+  --color-error-ink: #ffc1cb;
+  --color-json-string: #9adeae;
+  --color-json-literal: #d5b2f1;
+}
+
+@layer base {
+  html,
+  body {
+    overscroll-behavior: none;
+  }
+  body {
+    font-family: var(--font-sans);
+    color: var(--color-ink);
+    background: var(--color-panel);
+    font-size: 14px;
+    line-height: 1.65;
+  }
+  button,
+  input,
+  select,
+  textarea {
+    font: inherit;
+  }
+  button,
+  a,
+  input,
+  textarea,
+  select {
+    -webkit-tap-highlight-color: transparent;
+  }
+  button {
+    cursor: pointer;
+  }
+  button:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+  button:focus-visible,
+  a:focus-visible {
+    outline: 3px solid var(--color-brand);
+    outline-offset: 3px;
+  }
+  ::selection {
+    background: var(--color-focus);
+    color: var(--color-ink);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

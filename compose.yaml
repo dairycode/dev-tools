@@ -1,0 +1,15 @@
+services:
+  dev-tools:
+    image: ${DEV_TOOLS_IMAGE:-dev-tools:local}
+    build:
+      context: .
+    ports:
+      - '${PORT:-8080}:8080'
+    restart: unless-stopped
+    read_only: true
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=16m
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
