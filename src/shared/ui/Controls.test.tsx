@@ -1,6 +1,6 @@
 import { fireEvent, render, screen } from '@testing-library/react'
 import { expect, it, vi } from 'vitest'
-import { Button, Field, TextInput } from './Controls'
+import { ActionBar, Button, Field, TextEditor, TextInput } from './Controls'
 import { InlineError, ResultPanel, ToolCard } from './Panels'
 
 it('共享字段保留原生标签关联、提示和输入事件', () => {
@@ -15,6 +15,40 @@ it('共享字段保留原生标签关联、提示和输入事件', () => {
   fireEvent.change(input, { target: { value: '新内容' } })
   expect(input).toHaveValue('新内容')
   expect(onChange).toHaveBeenCalledOnce()
+})
+
+it('编辑工作区的设置与文本各有标签，设置更新不覆盖输入或快捷键', () => {
+  const onChange = vi.fn()
+  const onKeyDown = vi.fn()
+  render(
+    <>
+      <TextEditor
+        id="editor"
+        label="编辑文本"
+        defaultValue="原文"
+        onChange={onChange}
+        onKeyDown={onKeyDown}
+        settings={
+          <Field htmlFor="mode" label="模式" inline>
+            <TextInput id="mode" defaultValue="UTF-8" />
+          </Field>
+        }
+      />
+      <ActionBar divided aria-label="文本操作">
+        <Button>编码</Button>
+      </ActionBar>
+    </>,
+  )
+  const editor = screen.getByLabelText('编辑文本')
+  fireEvent.change(screen.getByLabelText('模式'), { target: { value: 'Latin-1' } })
+  expect(editor).toHaveValue('原文')
+  fireEvent.change(editor, { target: { value: '新文本' } })
+  fireEvent.keyDown(editor, { key: 'Enter', ctrlKey: true })
+  expect(onChange).toHaveBeenCalledOnce()
+  expect(onKeyDown).toHaveBeenCalledOnce()
+  expect(screen.getByLabelText('文本操作')).toContainElement(
+    screen.getByRole('button', { name: '编码' }),
+  )
 })
 
 it('按钮变体和紧凑尺寸仍透传原生行为，禁用时不触发操作', () => {

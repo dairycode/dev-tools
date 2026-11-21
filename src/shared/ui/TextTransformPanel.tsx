@@ -1,5 +1,5 @@
 import { useState, type ReactNode } from 'react'
-import { ActionBar, Button, Field, TextArea, errorText, onShortcut } from './Controls'
+import { ActionBar, Button, TextEditor, errorText, onShortcut } from './Controls'
 import { ToolCard } from './Panels'
 import { useToast } from './Toast'
 import { useClipboard } from '../hooks/useClipboard'
@@ -27,18 +27,17 @@ export function TextTransformPanel({
   }
   return (
     <ToolCard>
-      {options}
-      <Field htmlFor={id} label="输入文本" className="mb-5">
-        <TextArea
-          id={id}
-          value={input}
-          placeholder="请输入要编码或解码的文本…"
-          onChange={(event) => setInput(event.target.value)}
-          onKeyDown={onShortcut(() => execute(actions[0]))}
-          aria-keyshortcuts="Control+Enter Meta+Enter"
-        />
-      </Field>
-      <ActionBar className="mb-5 last:mb-0">
+      <TextEditor
+        id={id}
+        label="输入文本"
+        settings={options}
+        value={input}
+        placeholder="请输入要编码或解码的文本…"
+        onChange={(event) => setInput(event.target.value)}
+        onKeyDown={onShortcut(() => execute(actions[0]))}
+        aria-keyshortcuts="Control+Enter Meta+Enter"
+      />
+      <ActionBar divided>
         {actions.map((action, index) => (
           <Button
             key={action.label}

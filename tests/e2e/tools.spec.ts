@@ -355,7 +355,7 @@ test('自绘下拉框：键盘确认、取消、Tab 焦点和外部点击', asyn
   await openTool(page, 'hash')
   const dropdown = page.getByRole('combobox', { name: '选择 Hash 算法' })
   await page.getByLabel('输入文本', { exact: true }).focus()
-  await page.keyboard.press('Tab')
+  await page.keyboard.press('Shift+Tab')
   await expect(dropdown).toBeFocused()
   await dropdown.press('End')
   await page.evaluate(() => window.dispatchEvent(new Event('scroll')))
@@ -370,8 +370,7 @@ test('自绘下拉框：键盘确认、取消、Tab 焦点和外部点击', asyn
   await dropdown.press('ArrowUp')
   await dropdown.press('Tab')
   await expect(dropdown).toHaveText('SHA-256')
-  // Safari 的系统键盘设置可跳过原生 checkbox，不强制覆盖浏览器的焦点顺序。
-  await expect(dropdown).not.toBeFocused()
+  await expect(page.getByLabel('输入文本', { exact: true })).toBeFocused()
   await expect(page.getByRole('listbox')).toHaveCount(0)
   await dropdown.click()
   await page.getByRole('heading', { level: 1 }).click()

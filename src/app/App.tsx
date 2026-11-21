@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { Link, Redirect, Route, Router, Switch, useLocation } from 'wouter'
 import { useHashLocation } from 'wouter/use-hash-location'
 import { tools, type ToolDefinition } from './registry'
@@ -15,7 +15,7 @@ function ToolScreen({ tool }: { tool: ToolDefinition }) {
     document.title = `${tool.title} · 开发工具包`
   }, [tool.title])
   return (
-    <section aria-labelledby="tool-title" className="mx-auto w-full max-w-260">
+    <section aria-labelledby="tool-title" className="mx-auto w-full max-w-240">
       <header className="mb-6">
         <h1 id="tool-title" className="text-2xl font-bold tracking-tight md:text-3xl">
           {tool.title}
@@ -28,12 +28,26 @@ function ToolScreen({ tool }: { tool: ToolDefinition }) {
   )
 }
 
+function revealNavigationLink(navigation: HTMLElement, link: HTMLElement) {
+  if (navigation.scrollWidth <= navigation.clientWidth) return
+  const navigationBounds = navigation.getBoundingClientRect()
+  const linkBounds = link.getBoundingClientRect()
+  const leftOverflow = linkBounds.left - navigationBounds.left - 12
+  const rightOverflow = linkBounds.right - navigationBounds.right + 12
+  if (leftOverflow < 0) navigation.scrollLeft += leftOverflow
+  else if (rightOverflow > 0) navigation.scrollLeft += rightOverflow
+}
+
 function Layout() {
   const [pathname] = useLocation()
   const { dismiss } = useToast()
+  const navigationRef = useRef<HTMLElement>(null)
   useEffect(() => {
     dismiss()
     window.scrollTo(0, 0)
+    const navigation = navigationRef.current
+    const activeLink = navigation?.querySelector<HTMLElement>('[aria-current="page"]')
+    if (navigation && activeLink) revealNavigationLink(navigation, activeLink)
   }, [pathname, dismiss])
   return (
     <div className="min-h-dvh md:grid md:grid-cols-[264px_minmax(0,1fr)]">
@@ -55,8 +69,13 @@ function Layout() {
           <p className="text-lg font-bold tracking-wide">开发工具包</p>
         </div>
         <nav
+          ref={navigationRef}
           aria-label="工具导航"
-          className="grid grid-cols-3 gap-1.5 px-3 py-2 md:flex md:flex-col md:gap-2 md:px-4 md:py-3"
+          onFocus={(event) => {
+            const link = event.target.closest<HTMLElement>('a')
+            if (link) revealNavigationLink(event.currentTarget, link)
+          }}
+          className="flex min-w-0 flex-nowrap gap-1.5 overflow-x-auto overscroll-none px-3 py-2 [scrollbar-width:none] md:flex-col md:gap-2 md:overflow-x-visible md:px-4 md:py-3"
         >
           {tools.map((tool) => (
             <Link
@@ -64,7 +83,7 @@ function Layout() {
               href={`/${tool.id}`}
               replace={pathname === `/${tool.id}`}
               aria-current={pathname === `/${tool.id}` ? 'page' : undefined}
-              className={`flex min-h-11.5 items-center justify-center gap-[5px] rounded-xl p-2 text-[12px] font-medium no-underline transition-colors md:justify-start md:gap-2.5 md:px-3 md:py-3 md:text-[14px] ${pathname === `/${tool.id}` ? 'bg-active text-brand' : 'text-subtle hover:bg-panel hover:text-ink'}`}
+              className={`flex min-h-11.5 shrink-0 items-center justify-center gap-[5px] rounded-xl p-2 text-[12px] font-medium whitespace-nowrap no-underline transition-colors md:justify-start md:gap-2.5 md:px-3 md:py-3 md:text-[14px] ${pathname === `/${tool.id}` ? 'bg-active text-brand' : 'text-subtle hover:bg-panel hover:text-ink'}`}
             >
               <Icon name={tool.icon} className="size-4.5 md:size-5" />
               <span>{tool.title}</span>
@@ -87,7 +106,11 @@ function Layout() {
         </div>
       </aside>
       <div className="flex min-w-0 flex-col">
-        <main id="main-content" tabIndex={-1} className="flex-1 px-5 py-6 outline-none md:px-8">
+        <main
+          id="main-content"
+          tabIndex={-1}
+          className="flex-1 px-5 pt-6 pb-6 outline-none md:px-8 md:pt-[clamp(32px,calc(20dvh-96px),96px)]"
+        >
           <Switch>
             <Route path="/">
               <Redirect to="/url" replace />

@@ -1,29 +1,38 @@
-import { useMemo, useState } from 'react'
-import { ActionBar, Button, Field, TextArea, errorText, onShortcut } from '../../shared/ui/Controls'
+import { useEffect, useState } from 'react'
+import { ActionBar, Button, TextEditor, errorText, onShortcut } from '../../shared/ui/Controls'
 import { InlineError, ToolCard } from '../../shared/ui/Panels'
 import { useToast } from '../../shared/ui/Toast'
 import { useClipboard } from '../../shared/hooks/useClipboard'
-import { useDebouncedValue } from '../../shared/hooks/useDebouncedValue'
 import { formatJson, inspectTree, parseJson } from './model'
 import { JsonTree } from './JsonTreeNode'
 
+function inspectInput(input: string) {
+  try {
+    const value = parseJson(input)
+    return { value, inspection: inspectTree(value), error: '' }
+  } catch (error) {
+    return { value: null, inspection: null, error: errorText(error) }
+  }
+}
+
 export default function JsonTool() {
   const [input, setInput] = useState('')
-  const settled = useDebouncedValue(input, 500)
+  const [parsed, setParsed] = useState<ReturnType<typeof inspectInput> | null>(null)
   const { notify, dismiss } = useToast()
   const copy = useClipboard()
-  const parsed = useMemo(() => {
-    if (!settled.trim() || settled !== input) return null
-    try {
-      const value = parseJson(settled)
-      return { value, inspection: inspectTree(value), error: '' }
-    } catch (error) {
-      return { value: null, inspection: null, error: errorText(error) }
-    }
-  }, [settled, input])
+  useEffect(() => {
+    if (!input.trim()) return
+    // 防抖期间保留已提交的预览，避免每次按键或格式化都先卸载旧树。
+    const timer = window.setTimeout(() => setParsed(inspectInput(input)), 500)
+    return () => window.clearTimeout(timer)
+  }, [input])
+  function changeInput(value: string) {
+    setInput(value)
+    if (!value.trim()) setParsed(null)
+  }
   function transform(indentation: 0 | 2) {
     try {
-      setInput(formatJson(input, indentation))
+      changeInput(formatJson(input, indentation))
       notify(indentation === 2 ? 'JSON 格式化成功' : 'JSON 压缩成功')
     } catch (error) {
       notify(errorText(error), 'error')
@@ -31,17 +40,16 @@ export default function JsonTool() {
   }
   return (
     <ToolCard>
-      <Field htmlFor="json-input" label="输入 JSON" className="mb-5">
-        <TextArea
-          id="json-input"
-          value={input}
-          onChange={(event) => setInput(event.target.value)}
-          onKeyDown={onShortcut(() => transform(2))}
-          aria-keyshortcuts="Control+Enter Meta+Enter"
-          placeholder={'请输入 JSON，例如 {"hello": "world"}'}
-        />
-      </Field>
-      <ActionBar className="mb-5 last:mb-0">
+      <TextEditor
+        id="json-input"
+        label="输入 JSON"
+        value={input}
+        onChange={(event) => changeInput(event.target.value)}
+        onKeyDown={onShortcut(() => transform(2))}
+        aria-keyshortcuts="Control+Enter Meta+Enter"
+        placeholder={'请输入 JSON，例如 {"hello": "world"}'}
+      />
+      <ActionBar divided>
         <Button variant="primary" onClick={() => transform(2)}>
           格式化
         </Button>
@@ -52,7 +60,7 @@ export default function JsonTool() {
         <Button
           variant="clear"
           onClick={() => {
-            setInput('')
+            changeInput('')
             dismiss()
           }}
         >
@@ -69,7 +77,7 @@ export default function JsonTool() {
             为避免页面卡顿，超大或过深数据暂不展开树视图；仍可格式化、压缩和复制。
           </p>
         ) : (
-          <JsonTree key={settled} value={parsed.value} inspection={parsed.inspection} />
+          <JsonTree value={parsed.value} inspection={parsed.inspection} />
         ))}
     </ToolCard>
   )

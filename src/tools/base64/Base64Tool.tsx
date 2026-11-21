@@ -14,7 +14,7 @@ export default function Base64Tool() {
         { label: '解码', run: (text) => decodeBase64(text, encoding) },
       ]}
       options={
-        <Field htmlFor="text-encoding" label="字符编码" className="mb-5 max-w-md">
+        <Field htmlFor="text-encoding" label="字符编码" inline className="w-52">
           <Select<TextEncoding>
             id="text-encoding"
             value={encoding}

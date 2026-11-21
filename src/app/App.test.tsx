@@ -62,6 +62,60 @@ describe('简洁界面与统一图标', () => {
   })
 })
 
+describe('横向工具导航', () => {
+  it('切换时只移动溢出的导航，使当前工具完整可见', () => {
+    renderApp()
+    const navigation = screen.getByRole('navigation', { name: '工具导航' })
+    const first = screen.getByRole('link', { name: tools[0]!.title })
+    const last = screen.getByRole('link', { name: tools.at(-1)!.title })
+    Object.defineProperties(navigation, {
+      clientWidth: { value: 300 },
+      scrollWidth: { value: 900 },
+    })
+    vi.spyOn(navigation, 'getBoundingClientRect').mockReturnValue(new DOMRect(0, 0, 300, 62))
+    vi.spyOn(last, 'getBoundingClientRect').mockReturnValue(new DOMRect(700, 8, 130, 46))
+    fireEvent.click(last)
+    expect(last).toHaveAttribute('aria-current', 'page')
+    expect(navigation.scrollLeft).toBe(542)
+    vi.spyOn(first, 'getBoundingClientRect').mockReturnValue(new DOMRect(-530, 8, 120, 46))
+    fireEvent.click(first)
+    expect(first).toHaveAttribute('aria-current', 'page')
+    expect(navigation.scrollLeft).toBe(0)
+  })
+
+  it('聚焦边缘工具时完整显示链接，但不会提前切换工具', () => {
+    renderApp()
+    const navigation = screen.getByRole('navigation', { name: '工具导航' })
+    const link = screen.getByRole('link', { name: tools[3]!.title })
+    Object.defineProperties(navigation, {
+      clientWidth: { value: 320 },
+      scrollWidth: { value: 900 },
+    })
+    vi.spyOn(navigation, 'getBoundingClientRect').mockReturnValue(new DOMRect(0, 0, 320, 62))
+    vi.spyOn(link, 'getBoundingClientRect').mockReturnValue(new DOMRect(310, 8, 100, 46))
+    fireEvent.focus(link)
+    expect(navigation.scrollLeft).toBe(102)
+    expect(screen.getByRole('link', { name: tools[0]!.title })).toHaveAttribute(
+      'aria-current',
+      'page',
+    )
+    expect(link).not.toHaveAttribute('aria-current')
+  })
+
+  it('没有横向溢出时不移动导航，保留桌面侧栏行为', () => {
+    renderApp()
+    const navigation = screen.getByRole('navigation', { name: '工具导航' })
+    Object.defineProperties(navigation, {
+      clientWidth: { value: 264 },
+      scrollWidth: { value: 264 },
+    })
+    const measure = vi.spyOn(navigation, 'getBoundingClientRect')
+    fireEvent.click(screen.getByRole('link', { name: tools.at(-1)!.title }))
+    expect(measure).not.toHaveBeenCalled()
+    expect(navigation.scrollLeft).toBe(0)
+  })
+})
+
 describe('单按钮三态主题', () => {
   it('显示当前状态，按系统 → 亮色 → 暗色 → 系统循环，保存兼容旧键', () => {
     const { themeButton } = renderApp()

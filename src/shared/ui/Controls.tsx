@@ -56,22 +56,24 @@ export function Field({
   htmlFor,
   label,
   labelTitle,
+  inline = false,
   className = '',
   children,
 }: {
   htmlFor: string
   label: string
   labelTitle?: string
+  inline?: boolean
   className?: string
   children: ReactNode
 }) {
   return (
-    <div className={`min-w-0 ${className}`}>
+    <div className={`min-w-0 ${inline ? 'flex items-center gap-3' : ''} ${className}`}>
       <label
         id={`${htmlFor}-label`}
         htmlFor={htmlFor}
         title={labelTitle}
-        className="mb-2 block text-sm font-semibold text-subtle"
+        className={`block text-sm font-semibold text-subtle ${inline ? 'shrink-0' : 'mb-2'}`}
       >
         {label}
       </label>
@@ -80,8 +82,44 @@ export function Field({
   )
 }
 
-export function ActionBar({ className = '', ...props }: HTMLAttributes<HTMLDivElement>) {
-  return <div className={`grid grid-cols-2 gap-3 sm:flex sm:flex-wrap ${className}`} {...props} />
+export function ActionBar({
+  divided = false,
+  className = '',
+  ...props
+}: HTMLAttributes<HTMLDivElement> & { divided?: boolean }) {
+  return (
+    <div
+      data-slot="action-bar"
+      className={`grid grid-cols-2 gap-3 sm:flex sm:flex-wrap ${divided ? 'mt-5 border-t border-line pt-5' : ''} ${className}`}
+      {...props}
+    />
+  )
+}
+
+export function TextEditor({
+  id,
+  label,
+  settings,
+  ...props
+}: TextareaHTMLAttributes<HTMLTextAreaElement> & {
+  id: string
+  label: string
+  settings?: ReactNode
+}) {
+  return (
+    <div className="min-w-0">
+      <div
+        data-slot="editor-toolbar"
+        className="mb-4 flex min-h-12.5 flex-wrap items-center justify-between gap-x-4 gap-y-3"
+      >
+        <label htmlFor={id} className="text-sm font-semibold text-subtle">
+          {label}
+        </label>
+        {settings}
+      </div>
+      <TextArea id={id} {...props} />
+    </div>
+  )
 }
 
 export function TextArea({
@@ -100,7 +138,7 @@ export function TextArea({
     <textarea
       ref={ref}
       value={value}
-      className={`block min-h-[clamp(128px,24dvh,180px)] max-h-[70dvh] resize-y overflow-y-auto overscroll-none font-mono text-sm leading-[1.8] [tab-size:2] ${textInputClassName} ${className}`}
+      className={`block min-h-[clamp(128px,24dvh,180px)] max-h-[70dvh] resize-y overflow-y-auto overscroll-none font-mono text-sm leading-[1.8] [tab-size:2] md:min-h-[clamp(180px,30dvh,256px)] ${textInputClassName} ${className}`}
       spellCheck={false}
       autoCapitalize="off"
       autoCorrect="off"

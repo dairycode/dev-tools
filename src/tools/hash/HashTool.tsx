@@ -1,5 +1,12 @@
 import { useMemo, useState } from 'react'
-import { ActionBar, Button, Field, TextArea, errorText, onShortcut } from '../../shared/ui/Controls'
+import {
+  ActionBar,
+  Button,
+  Field,
+  TextEditor,
+  errorText,
+  onShortcut,
+} from '../../shared/ui/Controls'
 import { InlineError, ResultPanel, ToolCard } from '../../shared/ui/Panels'
 import { Select } from '../../shared/ui/Select'
 import { useClipboard } from '../../shared/hooks/useClipboard'
@@ -30,35 +37,37 @@ export default function HashTool() {
   }
   return (
     <ToolCard>
-      <Field htmlFor="hash-input" label="输入文本" className="mb-5">
-        <TextArea
-          id="hash-input"
-          value={input}
-          onChange={(event) => setInput(event.target.value)}
-          onKeyDown={onShortcut(confirm)}
-          aria-keyshortcuts="Control+Enter Meta+Enter"
-          placeholder="请输入要计算 Hash 的文本…"
-        />
-      </Field>
-      <Field
-        htmlFor="hash-algorithm"
-        label="选择 Hash 算法"
-        labelTitle="MD5 / SHA-1 仅用于兼容与校验，不适合密码存储"
-        className="mb-5"
-      >
-        <Select<HashAlgorithm>
-          id="hash-algorithm"
-          value={algorithm}
-          onChange={setAlgorithm}
-          options={[
-            { value: 'md5', label: 'MD5' },
-            { value: 'sha1', label: 'SHA-1' },
-            { value: 'sha256', label: 'SHA-256' },
-            { value: 'sha512', label: 'SHA-512' },
-          ]}
-        />
-      </Field>
-      <label className="mb-5 flex items-start gap-2 text-sm text-subtle">
+      <TextEditor
+        id="hash-input"
+        label="输入文本"
+        settings={
+          <Field
+            htmlFor="hash-algorithm"
+            label="选择 Hash 算法"
+            inline
+            labelTitle="MD5 / SHA-1 仅用于兼容与校验，不适合密码存储"
+            className="w-64"
+          >
+            <Select<HashAlgorithm>
+              id="hash-algorithm"
+              value={algorithm}
+              onChange={setAlgorithm}
+              options={[
+                { value: 'md5', label: 'MD5' },
+                { value: 'sha1', label: 'SHA-1' },
+                { value: 'sha256', label: 'SHA-256' },
+                { value: 'sha512', label: 'SHA-512' },
+              ]}
+            />
+          </Field>
+        }
+        value={input}
+        onChange={(event) => setInput(event.target.value)}
+        onKeyDown={onShortcut(confirm)}
+        aria-keyshortcuts="Control+Enter Meta+Enter"
+        placeholder="请输入要计算 Hash 的文本…"
+      />
+      <label className="mt-4 flex items-start gap-2 text-sm text-subtle">
         <input
           className="mt-1 size-4 shrink-0 accent-brand"
           type="checkbox"
@@ -67,7 +76,7 @@ export default function HashTool() {
         />
         去除首尾空白
       </label>
-      <ActionBar className="mb-5 last:mb-0">
+      <ActionBar divided>
         <Button variant="primary" onClick={confirm}>
           计算Hash
         </Button>

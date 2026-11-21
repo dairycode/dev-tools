@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { ActionBar, Button, Field, TextArea, errorText, onShortcut } from '../../shared/ui/Controls'
+import { ActionBar, Button, TextEditor, errorText, onShortcut } from '../../shared/ui/Controls'
 import { ToolCard } from '../../shared/ui/Panels'
 import { Icon } from '../../shared/ui/Icon'
 import { useToast } from '../../shared/ui/Toast'
@@ -54,18 +54,17 @@ export default function QrCodeTool() {
     }
   }
   return (
-    <ToolCard className="grid items-start gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(240px,0.75fr)]">
-      <Field htmlFor="qr-input" label="输入内容">
-        <TextArea
-          id="qr-input"
-          value={input}
-          onChange={(event) => changeInput(event.target.value)}
-          onKeyDown={onShortcut(() => void generate())}
-          aria-keyshortcuts="Control+Enter Meta+Enter"
-          placeholder="请输入文本、网址或其他内容…"
-        />
-      </Field>
-      <ActionBar className="lg:col-start-1">
+    <ToolCard className="grid items-start gap-x-6 gap-y-5 lg:grid-cols-[minmax(0,1fr)_minmax(240px,0.75fr)] lg:gap-y-0">
+      <TextEditor
+        id="qr-input"
+        label="输入内容"
+        value={input}
+        onChange={(event) => changeInput(event.target.value)}
+        onKeyDown={onShortcut(() => void generate())}
+        aria-keyshortcuts="Control+Enter Meta+Enter"
+        placeholder="请输入文本、网址或其他内容…"
+      />
+      <ActionBar divided className="lg:col-start-1">
         <Button variant="primary" disabled={isLoading} onClick={() => void generate()}>
           {isLoading ? '生成中…' : '生成二维码'}
         </Button>
@@ -84,7 +83,7 @@ export default function QrCodeTool() {
       </ActionBar>
       <div
         data-slot="qr-preview"
-        className="flex min-h-75 items-center justify-center rounded-xl border border-dashed border-line bg-panel p-6 lg:col-start-2 lg:row-start-1 lg:row-span-2"
+        className="flex min-h-75 items-center justify-center rounded-xl border border-dashed border-line bg-panel p-6 lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:self-stretch"
         aria-busy={isLoading}
       >
         {isLoading ? (

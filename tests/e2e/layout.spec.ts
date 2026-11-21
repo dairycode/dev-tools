@@ -20,6 +20,7 @@ for (const viewport of [
       await page.setViewportSize(viewport)
       await page.addInitScript((value) => localStorage.setItem('dev-tools-theme', value), theme)
       await openTool(page, 'url')
+      let editorTop: number | undefined
       for (const id of tools) {
         await page.getByRole('navigation').locator(`a[href="#/${id}"]`).click()
         await expect(page.locator(`a[href="#/${id}"]`)).toHaveAttribute('aria-current', 'page')
@@ -31,7 +32,18 @@ for (const viewport of [
           )
           const root = document.documentElement
           const footer = document.querySelector('footer')?.getBoundingClientRect()
+          const workspace = document.querySelector<HTMLElement>('main > section')!
+          const heading = document.querySelector('h1')!.getBoundingClientRect()
+          const card = document.querySelector('[data-slot="tool-card"]')!.getBoundingClientRect()
+          const editor = document.querySelector('textarea')?.getBoundingClientRect()
           return {
+            workspaceWidth: workspace.getBoundingClientRect().width,
+            headingTop: heading.top,
+            headingLeft: heading.left,
+            cardTop: card.top,
+            cardLeft: card.left,
+            editorTop: editor?.top,
+            editorHeight: editor?.height,
             scrollHeight: root.scrollHeight,
             viewportHeight: innerHeight,
             hasHorizontalOverflow: root.scrollWidth > innerWidth,
@@ -58,6 +70,21 @@ for (const viewport of [
           hasTruncatedSelect: false,
           clippedControls: [],
         })
+        expect(bounds.workspaceWidth, id).toBeLessThanOrEqual(960)
+        expect(bounds.headingTop, id).toBeCloseTo(
+          Math.min(96, Math.max(32, viewport.height * 0.2 - 96)),
+          1,
+        )
+        expect(bounds.cardTop - bounds.headingTop, id).toBeCloseTo(60, 1)
+        expect(bounds.cardLeft, id).toBeCloseTo(bounds.headingLeft, 1)
+        if (bounds.editorTop !== undefined) {
+          editorTop ??= bounds.editorTop
+          expect(bounds.editorTop, id).toBeCloseTo(editorTop, 1)
+          expect(bounds.editorHeight, id).toBeCloseTo(
+            Math.min(256, Math.max(180, viewport.height * 0.3)),
+            1,
+          )
+        }
         expect(bounds.scrollHeight, id).toBeLessThanOrEqual(bounds.viewportHeight + 1)
         expect(bounds.footerBottom, id).toBeLessThanOrEqual(bounds.viewportHeight + 1)
         if (id === 'timestamp') {

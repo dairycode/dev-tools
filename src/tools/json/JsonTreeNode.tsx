@@ -87,16 +87,31 @@ function Node({
 }
 
 export function JsonTree({ value, inspection }: { value: JsonValue; inspection: Inspection }) {
-  const [expanded, setExpanded] = useState(
-    () => new Set(inspection.count <= 200 ? inspection.paths : ['']),
-  )
+  const [expansion, setExpansion] = useState(() => ({
+    inspection,
+    paths: new Set(inspection.count <= 200 ? inspection.paths : ['']),
+  }))
+  let expanded = expansion.paths
+  if (expansion.inspection !== inspection) {
+    const previousPaths = new Set(expansion.inspection.paths)
+    expanded = new Set(
+      inspection.paths.filter((path) =>
+        previousPaths.has(path)
+          ? expansion.paths.has(path)
+          : inspection.count <= 200 || path === '',
+      ),
+    )
+    // 随新快照同步协调展开状态，保留同路径操作，同时移除旧路径、初始化新路径。
+    setExpansion({ inspection, paths: expanded })
+  }
+  function setExpanded(paths: Set<string>) {
+    setExpansion({ inspection, paths })
+  }
   function toggle(path: string) {
-    setExpanded((previous) => {
-      const next = new Set(previous)
-      if (next.has(path)) next.delete(path)
-      else next.add(path)
-      return next
-    })
+    const next = new Set(expanded)
+    if (next.has(path)) next.delete(path)
+    else next.add(path)
+    setExpanded(next)
   }
   return (
     <ResultPanel
