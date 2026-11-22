@@ -35,13 +35,25 @@
 - Chromium / Firefox / WebKit 桌面及手机核心流程通过；截图/自动无障碍检查留证。
 - 同设备同输入对照旧版，记录首屏资源和操作耗时，不伪造性能结论。
 - 根目录与子目录静态部署通过。
-- Docker 实际构建、非 root/只读启动、健康检查、MIME/缓存/404、容器浏览器 E2E 通过。
+- Docker 默认宿主端口与容器端口均为 8001，显式使用项目自建 bridge 网络；实际构建、网络/端口映射、非 root/只读启动、健康检查、MIME/缓存/404、容器浏览器 E2E 通过。
 - 按用户明确要求使用 Tailwind 4，不保留旧浏览器兼容承诺；实际验证现代 Chromium、Firefox、WebKit。
 - 不留临时调试代码、服务器进程或测试容器。
 
 ## 实际验收记录
 
-### PNG 品牌与紧凑间距（2026-11-21，当前版本）
+### 通用 Docker 网络名（当前版本）
+
+- 将实际网络名统一为 `shared-network`，不加 Compose 项目名前缀；`DOCKER_NETWORK_NAME` 可覆盖实际名称。网络仍由本项目 Compose 创建管理，其他项目通过 `external: true` 引用；部署说明包含接入方式及网络删除边界。
+- 测试脚本强制设置独立的 `dev-tools-verify-<进程号>-network`，只检查和清理本轮网络，不接入或删除正式共享网络。已用不同项目名检查默认实际网络名仍为 `shared-network`，并确认自定义名称覆盖生效。
+- `npm run verify` 通过（178 项单元/组件测试），`npm run test:docker` 通过根目录五项目 **235 项**及子目录 Chromium **47 项**；本轮测试网络创建和清理正常。未启动正式部署或操作其他容器/网络。
+
+### 默认端口与自建 Docker 网络（改用通用网络名前的记录）
+
+- 宿主默认端口和容器内部监听统一改为 `8001`，同步 Compose 映射、Nginx、Dockerfile 的端口声明与健康检查；`PORT` 仍只覆盖宿主端口。Compose 显式声明并挂接 `app` 自建 bridge 网络，默认名为 `dev-tools_app`，随项目名隔离，不使用内置网络或隐式 Compose 默认网络。
+- 容器验收脚本增加真实网络连接、bridge 驱动和 `8001/tcp` 映射断言；已验证默认 Compose 配置为 `8001:8001`，覆盖 `PORT=9000` 时为 `9000:8001`。部署说明同步独立 `docker run` 创建/挂接网络、代理上游及旧版端口迁移方式。
+- `npm run verify` 通过，15 个单元/组件文件、178 项测试；本轮执行 `TEST_PORT=8001 npm run test:docker`，独立测试项目在宿主 8001、容器 8001 和自建网络上通过完整根目录五项目 **235 项**、子目录 Chromium **47 项**，无跳过、无重试。测试容器与网络已自动清理，未执行正式部署或操作用户服务。
+
+### PNG 品牌与紧凑间距（2026-11-21，上一轮记录）
 
 - 经用户确认，改用其提供的「豆包.png」：只去掉与画布边缘连通的灰白棋盘格背景、处理黑色轮廓的抗锯齿白边，保留封闭轮廓内的白脸、粉色鼻子及细节；收紧外围留白，导出 256×256 透明 PNG（45,638 B）。下载目录源文件 SHA-256 前后一致，不修改原图、不重绘奶牛。
 - 页面品牌与 favicon 共用 `public/favicon.png`，HTML 声明 `image/png`；不再使用原 SVG 品牌文件。页面图标由手机 34px / 桌面 42px 放大到 40px / 48px，与文字间距由 12px 缩到 8px，品牌文字和工具功能图标不变。
@@ -224,7 +236,7 @@ docker buildx build --platform linux/amd64 --load -t dev-tools:amd64 .
 重新采集新版：
 
 ```bash
-CAPTURE_VERSION=after CAPTURE_URL=http://127.0.0.1:8080/ node scripts/capture-ui.mjs
+CAPTURE_VERSION=after CAPTURE_URL=http://127.0.0.1:8001/ node scripts/capture-ui.mjs
 ```
 
 ### 性能：首轮历史对照（非当前全同步版本）

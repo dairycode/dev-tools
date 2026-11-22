@@ -6,10 +6,31 @@
 
 ```bash
 docker compose up -d --build
-curl -f http://localhost:8080/healthz
+curl -f http://localhost:8001/healthz
 ```
 
-默认对外暴露宿主 `8080`，容器内部也是 `8080`。`PORT=9000 docker compose up -d --build` 可改宿主端口。生产环境请配合防火墙，仅开放需要的端口。
+默认对外暴露宿主 `8001`，容器内部也是 `8001`。`PORT=9000 docker compose up -d --build` 可改宿主端口，容器内部仍为 `8001`。生产环境请配合防火墙，仅开放需要的端口。
+
+Compose 显式创建并使用名为 `shared-network` 的自建 bridge 网络，不添加项目名前缀；可用 `DOCKER_NETWORK_NAME` 覆盖网络名。容器仅连接该网络，不使用 Docker 内置的 `bridge` / `host` 网络，也不依赖隐式的 Compose 默认网络。
+
+网络由本项目的 Compose 创建和管理。其他 Compose 项目应通过外部网络引用接入，不要重复声明创建同名网络：
+
+```yaml
+services:
+  other-service:
+    # 保留该服务原有的 image 等配置
+    networks:
+      - shared
+
+networks:
+  shared:
+    external: true
+    name: shared-network
+```
+
+先启动本项目，再启动引用网络的其他项目。同一 Docker 主机、同一网络内可通过 `http://dev-tools:8001` 访问本服务。`docker compose down` 会尝试删除该网络；仍有其他容器连接时 Docker 会拒绝删除，不会强制断开其他容器。需要同时运行本项目的多套独立实例时，为每套设置不同的 `DOCKER_NETWORK_NAME`，测试脚本也会强制使用独立名称。
+
+从旧版升级时，重新构建会将容器内部端口从 `8080` 改为 `8001`；如需暂时保留旧的宿主访问端口，可用 `PORT=8080 docker compose up -d --build`。外层反向代理的上游端口及防火墙放行规则也需同步调整。
 
 需要 Docker BuildKit（当前 Docker 默认启用）和 Compose v2.20+。首次构建需要访问 npm 与基础镜像仓库；运行阶段不需要 npm 或外部业务 API。没有数据库、持久化卷或必须传入的环境变量。
 
@@ -17,19 +38,20 @@ curl -f http://localhost:8080/healthz
 
 - Node 24 LTS 构建阶段执行 `npm ci`、类型检查和生产构建。
 - Nginx unprivileged 运行阶段，仅复制 dist，不包含 Node、源码、node_modules。
-- UID/GID 为 `101:101`，监听 8080。Compose 设置只读文件系统、`/tmp` 临时挂载、移除 capabilities 和禁止提权。
+- UID/GID 为 `101:101`，监听 8001。Compose 设置只读文件系统、`/tmp` 临时挂载、移除 capabilities 和禁止提权。
 - `/healthz` 返回 `ok`，Docker 每 30 秒检查；启动后可用 `docker compose ps` 查看健康状态。
 - `index.html` 要求重新验证缓存；带内容指纹的 assets 长期缓存；缺失 JS/CSS 返回 404，不返回 HTML。
 - 构建时预压缩静态文件，Nginx 优先发送 gzip 文件并保留动态压缩兜底；正确 MIME、nosniff、禁止 iframe 嵌入等响应头。CSP 禁止 connect 请求；保留的内联脚本用于首屏主题初始化。
 
-脱离 Compose 单独运行时，必须提供可写临时目录：
+脱离 Compose 单独运行时，先创建自建网络（已有同名网络则跳过创建），并提供可写临时目录：
 
 ```bash
 docker build -t dev-tools:local .
-docker run -d --name dev-tools \
+docker network create --driver bridge shared-network
+docker run -d --name dev-tools --network shared-network \
   --read-only --tmpfs /tmp:rw,noexec,nosuid,size=16m \
   --cap-drop ALL --security-opt no-new-privileges:true \
-  --restart unless-stopped -p 8080:8080 dev-tools:local
+  --restart unless-stopped -p 8001:8001 dev-tools:local
 ```
 
 ## 基础镜像源
@@ -63,7 +85,7 @@ DEV_TOOLS_IMAGE=dev-tools:$TAG docker compose up -d --no-build
 
 ## 域名与 HTTPS
 
-可由宿主 Nginx、Caddy、Traefik 等反向代理到 `http://127.0.0.1:8080`。TLS 在外层终止，应用镜像不绑定域名。推荐 HTTPS，Clipboard API 在非安全上下文中可能不可用，应用会尝试兼容复制，失败时提示手动复制。
+可由宿主 Nginx、Caddy、Traefik 等反向代理到 `http://127.0.0.1:8001`；若代理也在容器内，需显式接入同一个自建网络，再转发到 `http://dev-tools:8001`，不能用代理容器自身的 `127.0.0.1`。TLS 在外层终止，应用镜像不绑定域名。推荐 HTTPS，Clipboard API 在非安全上下文中可能不可用，应用会尝试兼容复制，失败时提示手动复制。
 
 前端不存在保密的 `VITE_*` 环境变量。修改容器的 `docker run -e` 不会自动改写已构建的 JS；目前没有需要运行时注入的 API 地址。
 
@@ -96,12 +118,12 @@ npm run verify
 npm run test:docker
 ```
 
-测试脚本使用独立 Compose 项目和 18080 端口，检测真实运行用户、只读设置、健康、缓存、gzip、MIME、404，再运行完整浏览器流程，并通过本地反向代理跑 Chromium 子目录流程，退出时清理测试容器。脚本不上传镜像、不自动部署到远端服务器。
+测试脚本使用独立 Compose 项目、独立命名的自建 bridge 网络和 18080 宿主端口（映射到容器 8001），不会连接或删除正式的 `shared-network`，检测网络连接/驱动、端口映射、真实运行用户、只读设置、健康、缓存、gzip、MIME、404，再运行完整浏览器流程，并通过本地反向代理跑 Chromium 子目录流程，退出时清理测试容器与网络。脚本不上传镜像、不自动部署到远端服务器。
 
 已有容器可单独测试 `/dev-tools/` 前缀剥离场景：
 
 ```bash
-SUBPATH_UPSTREAM=http://127.0.0.1:8080/ npm run test:subpath -- --project=chromium
+SUBPATH_UPSTREAM=http://127.0.0.1:8001/ npm run test:subpath -- --project=chromium
 ```
 
 代理只监听本机随机端口，并在测试结束后关闭；测试资源依旧由该容器返回。它不是生产代理配置，也不证明任意第三方网关配置都正确。

@@ -43,7 +43,7 @@ npm run preview     # 预览生产构建，端口 4173
 docker compose up -d --build
 ```
 
-访问 <http://localhost:8080>。修改宿主端口：
+访问 <http://localhost:8001>，容器内部也监听 `8001`。Compose 自动创建并使用名为 `shared-network` 的自建 bridge 网络，不添加项目名前缀；可用 `DOCKER_NETWORK_NAME` 覆盖网络名。其他项目通过 `external: true` 引用该网络即可互通，示例见[部署说明](docs/deployment.md)。修改宿主端口：
 
 ```bash
 PORT=9000 docker compose up -d --build
@@ -71,14 +71,14 @@ npm run test:e2e
 
 npm run test:docker
 # 构建并启动只读/非 root 容器，运行完整浏览器矩阵和 Chromium 子目录验收
-# 使用独立 Compose 项目，结束后自动清理测试容器
+# 使用独立 Compose 项目和自建网络，结束后自动清理测试容器与网络
 ```
 
 容器测试默认使用 `18080`，可通过 `TEST_PORT` 修改。已有容器也可以直接验收：
 
 ```bash
-E2E_CONTAINER=1 E2E_BASE_URL=http://127.0.0.1:8080/ npm run test:e2e
-SUBPATH_UPSTREAM=http://127.0.0.1:8080/ npm run test:subpath -- --project=chromium
+E2E_CONTAINER=1 E2E_BASE_URL=http://127.0.0.1:8001/ npm run test:e2e
+SUBPATH_UPSTREAM=http://127.0.0.1:8001/ npm run test:subpath -- --project=chromium
 ```
 
 容器验收报告：`npx playwright show-report playwright-report/root`，子目录报告将末尾改为 `subpath`；单独运行 `test:e2e` 时用默认 `npx playwright show-report`。覆盖率报告位于 `coverage/index.html`。CI 同时保留根目录与子目录报告，执行同一条检查链，不自动向生产环境发布。
